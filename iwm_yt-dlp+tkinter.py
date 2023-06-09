@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-PROGRAM = "YT-DLP+Tkinter Ver.iwm20230423"
+PROGRAM = "YT-DLP+Tkinter Ver.iwm20230609"
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -9,7 +9,10 @@ PROGRAM = "YT-DLP+Tkinter Ver.iwm20230423"
 # YT-DLP Command & Option
 CmdOpt = """
 yt-dlp -f b
+yt-dlp -x --audio-format mp3
 yt-dlp_linux -f b
+yt-dlp_linux -x --audio-format mp3
+echo
 """
 
 #-------------------------------------------------------------------------------
@@ -23,6 +26,8 @@ import tkinter.ttk as Tk_Ttk
 #-------------------------------------------------------------------------------
 # Function
 #-------------------------------------------------------------------------------
+ShowFirstTextFlg = True
+
 ShowFirstText = """
 実行プログラム YT-DLP は以下のサイトから入手できます。
   https://github.com/yt-dlp/yt-dlp#release-files
@@ -140,9 +145,9 @@ def Sub_CmdOpt_Exec_Btn1(e=None):
 		print("\033[93;104m " + _cmd + " \033[0m")
 		try:
 			Os.system(_cmd)
-			print("")
 		except:
 			break
+		print("\033[97;101m End \033[0m\n")
 	a1 = []
 
 def Sub_Args_St1_ContextMenu(e):
@@ -217,6 +222,10 @@ def Sub_St_Paste_All(obj=None, e=None):
 	if obj == None:
 		return
 	def inner():
+		global ShowFirstTextFlg
+		if ShowFirstTextFlg == True:
+			ShowFirstTextFlg = False
+			obj.delete("1.0", "end")
 		text = Root.selection_get(selection="CLIPBOARD").rstrip()
 		if len(text) > 0:
 			obj.insert("insert", text + "\n")
