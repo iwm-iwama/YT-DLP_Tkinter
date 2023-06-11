@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-PROGRAM = "YT-DLP+Tkinter Ver.iwm20230609"
+PROGRAM = "YT-DLP+Tkinter Ver.iwm20230611"
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -111,19 +111,23 @@ def Sub_Cb_Paste_Select(obj=None, e=None):
 	if obj == None:
 		return
 	def inner():
-		text = Root.selection_get(selection="CLIPBOARD").rstrip()
-		if len(text) > 0:
+		try:
+			text = Root.selection_get(selection="CLIPBOARD").rstrip()
 			obj.delete("sel.first", "sel.last")
 			obj.insert("insert", text)
+		except:
+			pass
 	return inner
 
 def Sub_Cb_Paste_All(obj=None, e=None):
 	if obj == None:
 		return
 	def inner():
-		text = Root.selection_get(selection="CLIPBOARD").rstrip()
-		if len(text) > 0:
+		try:
+			text = Root.selection_(selection="CLIPBOARD").rstrip()
 			obj.insert("insert", text)
+		except:
+			pass
 	return inner
 
 def Sub_CmdOpt_Exec_Btn1(e=None):
@@ -211,11 +215,13 @@ def Sub_St_Paste_Select(obj=None, e=None):
 	if obj == None:
 		return
 	def inner():
-		text = Root.selection_get(selection="CLIPBOARD").rstrip()
-		if len(text) > 0:
+		try:
+			text = Root.selection_get(selection="CLIPBOARD").rstrip()
 			obj.delete("sel.first", "sel.last")
 			obj.insert("insert", text + "\n")
 			obj.see("insert")
+		except:
+			pass
 	return inner
 
 def Sub_St_Paste_All(obj=None, e=None):
@@ -226,10 +232,12 @@ def Sub_St_Paste_All(obj=None, e=None):
 		if ShowFirstTextFlg == True:
 			ShowFirstTextFlg = False
 			obj.delete("1.0", "end")
-		text = Root.selection_get(selection="CLIPBOARD").rstrip()
-		if len(text) > 0:
+		try:
+			text = Root.selection_get(selection="CLIPBOARD").rstrip()
 			obj.insert("insert", text + "\n")
 			obj.see("insert")
+		except:
+			pass
 	return inner
 
 #-------------------------------------------------------------------------------
