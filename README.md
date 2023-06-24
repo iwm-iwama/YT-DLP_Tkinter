@@ -1,6 +1,6 @@
 【実行に必要なファイル】
 
-	Tkinter (Python3, Tcl, Tk)
+	Tkinter (Python3, Tk)
 
 【動作確認済】
 
