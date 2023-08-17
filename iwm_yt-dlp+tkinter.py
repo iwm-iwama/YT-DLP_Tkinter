@@ -1,7 +1,13 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-PROGRAM = "YT-DLP+Tkinter Ver.iwm20230611"
+VERSION = "YT-DLP+Tkinter Ver.iwm20230817"
+
+import shutil
+import subprocess
+import tkinter as Tk
+import tkinter.scrolledtext as Tk_St
+import tkinter.ttk as Tk_Ttk
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -10,37 +16,33 @@ PROGRAM = "YT-DLP+Tkinter Ver.iwm20230611"
 CmdOpt = """
 yt-dlp -f b
 yt-dlp -x --audio-format mp3
-yt-dlp_linux -f b
-yt-dlp_linux -x --audio-format mp3
 echo
 """
 
 #-------------------------------------------------------------------------------
-# Import
-#-------------------------------------------------------------------------------
-import os as Os
-import tkinter as Tk
-import tkinter.scrolledtext as Tk_St
-import tkinter.ttk as Tk_Ttk
-
-#-------------------------------------------------------------------------------
 # Function
 #-------------------------------------------------------------------------------
-ShowFirstTextFlg = True
+def Sub_Clear():
+	subprocess.run("clear || cls", shell=True)
 
-ShowFirstText = """
-実行プログラム YT-DLP は以下のサイトから入手できます。
-  https://github.com/yt-dlp/yt-dlp#release-files
-
-動作環境に応じて下記から選択してください。
-  ・Recommended
-  ・Alternatives
-"""
-
-def Sub_ShowFirstText():
-	obj1 = Args_St1
-	obj1.delete("1.0", "end-1c")
-	obj1.insert("insert", ShowFirstText.strip() + "\n")
+def Sub_YT_DLP_Update():
+	CMD = "yt-dlp"
+	print("\033[97;104m YT-DLP Update \033[0m")
+	if shutil.which(CMD):
+		print(
+			"\033[93m",
+			subprocess.run(CMD + " --update-to nightly", shell=True, capture_output=True, text=True).stdout,
+			"\033[0m",
+			end=""
+		)
+	else:
+		print(
+			"   \033[91mNot Installed.\033[0m\n",
+			"   YT-DLP は以下のサイトから入手できます。\n",
+			"     \033[93mhttps://github.com/yt-dlp/yt-dlp#release-files\033[0m\n",
+			"     \033[96m・Recommended（推奨版）\033[0m"
+		)
+	print("\033[97;104m END \033[0m")
 
 def Sub_Root_Resize(e):
 	if e.widget is Root:
@@ -141,17 +143,17 @@ def Sub_CmdOpt_Exec_Btn1(e=None):
 			_ln = _ln.strip()
 			if len(_ln) > 0:
 				a1.append(s2 + " " + _ln)
-	Os.system("clear || cls")
+	Sub_Clear()
 	if len(a1) == 0:
 		print("\033[39;101m No input data! \033[0m")
 		return
-	for _cmd in a1:
-		print("\033[93;104m " + _cmd + " \033[0m")
+	for _s1 in a1:
+		print("\033[97;104m " + _s1 + " \033[0m")
 		try:
-			Os.system(_cmd)
+			subprocess.run(_s1, shell=True)
 		except:
 			break
-		print("\033[97;101m End \033[0m\n")
+		print("\033[97;104m END \033[0m\n")
 	a1 = []
 
 def Sub_Args_St1_ContextMenu(e):
@@ -228,10 +230,6 @@ def Sub_St_Paste_All(obj=None, e=None):
 	if obj == None:
 		return
 	def inner():
-		global ShowFirstTextFlg
-		if ShowFirstTextFlg == True:
-			ShowFirstTextFlg = False
-			obj.delete("1.0", "end")
 		try:
 			text = Root.selection_get(selection="CLIPBOARD").rstrip()
 			obj.insert("insert", text + "\n")
@@ -259,7 +257,7 @@ Root.configure(bg="dimgray")
 Root.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
 Root.minsize(width=min["W"], height=min["H"])
 Root.resizable(width=True, height=True)
-Root.title(PROGRAM)
+Root.title(VERSION)
 
 #-------------------------------------------------------------------------------
 # Command & Option
@@ -328,6 +326,9 @@ Args_Paste_Btn1 = Tk.Button(Root, text="ペースト", font=("Helvetica", 8), fg
 #-------------------------------------------------------------------------------
 # Main
 #-------------------------------------------------------------------------------
+Sub_Clear()
+Sub_YT_DLP_Update()
+
 # Sub_Root_Resize(e) で自動調整
 CmdOpt_Lbl1.place(x=10, y=5)
 CmdOpt_Cb1.place(x=10, y=25, height=22)
@@ -337,6 +338,5 @@ Args_St1.place(x=10, y=75)
 Args_Clear_Btn1.place(y=55, width=59, height=19)
 Args_Paste_Btn1.place(y=55, width=83, height=19)
 
-Sub_ShowFirstText()
 Root.mainloop()
-Root.quit
+Root.quit()
