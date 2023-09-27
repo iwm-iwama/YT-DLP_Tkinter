@@ -141,7 +141,7 @@ def Sub_CmdOpt_Exec_Btn1(e=None):
 		for _ln in s1.split("\n"):
 			_ln = _ln.strip()
 			if len(_ln) > 0:
-				a1 += [s2, " ", _ln]
+				a1 += [(s2 + " " + _ln)]
 	Sub_Clear()
 	if len(a1) == 0:
 		print("\033[39;101m No input data! \033[0m")
