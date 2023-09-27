@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-VERSION = "YT-DLP+Tkinter Ver.iwm20230817"
+VERSION = "YT-DLP+Tkinter Ver.iwm20230927"
 
 import shutil
 import subprocess
@@ -32,8 +32,7 @@ def Sub_YT_DLP_Update():
 		print(
 			"\033[93m",
 			subprocess.run(CMD + " --update-to nightly", shell=True, capture_output=True, text=True).stdout,
-			"\033[0m",
-			end=""
+			"\033[0m"
 		)
 	else:
 		print(
@@ -42,7 +41,7 @@ def Sub_YT_DLP_Update():
 			"     \033[93mhttps://github.com/yt-dlp/yt-dlp#release-files\033[0m\n",
 			"     \033[96m・Recommended（推奨版）\033[0m"
 		)
-	print("\033[97;104m END \033[0m")
+	print("\033[97;104m (END) \033[0m")
 
 def Sub_Root_Resize(e):
 	if e.widget is Root:
@@ -142,18 +141,19 @@ def Sub_CmdOpt_Exec_Btn1(e=None):
 		for _ln in s1.split("\n"):
 			_ln = _ln.strip()
 			if len(_ln) > 0:
-				a1.append(s2 + " " + _ln)
+				a1 += [s2, " ", _ln]
 	Sub_Clear()
 	if len(a1) == 0:
 		print("\033[39;101m No input data! \033[0m")
 		return
 	for _s1 in a1:
-		print("\033[97;104m " + _s1 + " \033[0m")
+		_s1 = _s1.strip()
+		print("\033[97;44m ", _s1, " \033[0m")
 		try:
 			subprocess.run(_s1, shell=True)
 		except:
 			break
-		print("\033[97;104m END \033[0m\n")
+		print("\033[97;44m (END) \033[0m\n")
 	a1 = []
 
 def Sub_Args_St1_ContextMenu(e):
