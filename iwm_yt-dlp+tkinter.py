@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-VERSION = "YT-DLP+Tkinter Ver.iwm20230927"
+VERSION = "YT-DLP+Tkinter Ver.iwm20231227"
 
 import shutil
 import subprocess
 import tkinter as Tk
 import tkinter.scrolledtext as Tk_St
 import tkinter.ttk as Tk_Ttk
+
+from ctypes import *
+from ctypes.wintypes import *
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -23,11 +26,20 @@ echo
 # Function
 #-------------------------------------------------------------------------------
 def Sub_Clear():
-	subprocess.run("clear || cls", shell=True)
+	# WindowsでESCを有効にするおまじない
+	subprocess.run("cls || clear", shell=True)
 
-def Sub_YT_DLP_Update():
-	CMD = "yt-dlp"
+def Sub_Terminal_Reposition():
+	# Windows以外で例外発生
+	try:
+		hwnd = windll.user32.GetForegroundWindow()
+		windll.user32.MoveWindow(hwnd, int(30), int(60), int(640), int(Root.winfo_screenheight() - 120), True)
+	except(NameError, SyntaxError):
+		pass
+
+def Sub_YtDlp_Update():
 	print("\033[97;104m YT-DLP Update \033[0m")
+	CMD = "yt-dlp"
 	if shutil.which(CMD):
 		print(
 			"\033[93m",
@@ -242,7 +254,6 @@ def Sub_St_Paste_All(obj=None, e=None):
 # Window Root
 #-------------------------------------------------------------------------------
 Root = Tk.Tk()
-
 min = {
 	"W": 560,
 	"H": 320
@@ -251,7 +262,6 @@ pos = {
 	"X": int((Root.winfo_screenwidth() - min["W"]) / 2),
 	"Y": int((Root.winfo_screenheight() - min["H"]) / 2)
 }
-
 Root.bind("<Configure>", Sub_Root_Resize)
 Root.configure(bg="dimgray")
 Root.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
@@ -327,7 +337,8 @@ Args_Paste_Btn1 = Tk.Button(Root, text="ペースト", font=("Helvetica", 8), fg
 # Main
 #-------------------------------------------------------------------------------
 Sub_Clear()
-Sub_YT_DLP_Update()
+Sub_Terminal_Reposition()
+Sub_YtDlp_Update()
 
 # Sub_Root_Resize(e) で自動調整
 CmdOpt_Lbl1.place(x=10, y=5)
