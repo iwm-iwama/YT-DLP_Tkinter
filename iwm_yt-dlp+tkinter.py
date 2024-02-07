@@ -1,7 +1,7 @@
-#!/usr/bin/python3
+#!python3
 #coding:utf-8
 
-VERSION = "YT-DLP+Tkinter Ver.iwm20231227"
+VERSION = "YT-DLP+Tkinter Ver.iwm20240206"
 
 import shutil
 import subprocess
@@ -33,12 +33,12 @@ def Sub_Terminal_Reposition():
 	# Windows以外で例外発生
 	try:
 		hwnd = windll.user32.GetForegroundWindow()
-		windll.user32.MoveWindow(hwnd, int(30), int(60), int(640), int(Root.winfo_screenheight() - 120), True)
+		windll.user32.MoveWindow(hwnd, int(30), int(60), int(640), int(Root.winfo_screenheight()-120), True)
 	except(NameError, SyntaxError):
 		pass
 
 def Sub_YtDlp_Update():
-	print("\033[97;104m YT-DLP Update \033[0m")
+	print("\033[97;44m YT-DLP Update \033[0m")
 	CMD = "yt-dlp"
 	if shutil.which(CMD):
 		print(
@@ -53,15 +53,15 @@ def Sub_YtDlp_Update():
 			"     \033[93mhttps://github.com/yt-dlp/yt-dlp#release-files\033[0m\n",
 			"     \033[96m・Recommended（推奨版）\033[0m"
 		)
-	print("\033[97;104m (END) \033[0m")
+	print("\033[97;44m (END) \033[0m")
 
 def Sub_Root_Resize(e):
 	if e.widget is Root:
-		CmdOpt_Cb1.place(width=e.width-170)
-		CmdOpt_Exec_Btn1.place(x=e.width-160)
-		Args_St1.place(width=e.width-10, height=e.height-90)
-		Args_Clear_Btn1.place(x=e.width-160)
-		Args_Paste_Btn1.place(x=e.width-100)
+		CmdOpt_Cb1.place(width=e.width-167)
+		CmdOpt_Exec_Btn1.place(x=e.width-157)
+		Args_St1.place(width=e.width-5, height=e.height-77)
+		Args_Clear_Btn1.place(x=e.width-157)
+		Args_Paste_Btn1.place(x=e.width-97)
 
 def Sub_CmdOpt_Cb1_ContextMenu(e):
 	obj1 = CmdOpt_Cb1
@@ -255,8 +255,8 @@ def Sub_St_Paste_All(obj=None, e=None):
 #-------------------------------------------------------------------------------
 Root = Tk.Tk()
 min = {
-	"W": 560,
-	"H": 320
+	"W": 400,
+	"H": 240
 }
 pos = {
 	"X": int((Root.winfo_screenwidth() - min["W"]) / 2),
@@ -272,7 +272,7 @@ Root.title(VERSION)
 #-------------------------------------------------------------------------------
 # Command & Option
 #-------------------------------------------------------------------------------
-CmdOpt_Lbl1 = Tk.Label(text="TY-DLP コマンド＆オプション", font=("Helvetica", 10, "bold"), fg="white", bg="dimgray")
+CmdOpt_Lbl1 = Tk.Label(text="TY-DLP コマンド／オプション", font=("Helvetica", 10, "bold"), fg="white", bg="dimgray")
 
 a1 = CmdOpt.strip().split("\n")
 CmdOpt_Cb1 = Tk_Ttk.Combobox(Root, font=("Courier", 11), values=(a1))
@@ -341,13 +341,13 @@ Sub_Terminal_Reposition()
 Sub_YtDlp_Update()
 
 # Sub_Root_Resize(e) で自動調整
-CmdOpt_Lbl1.place(x=10, y=5)
-CmdOpt_Cb1.place(x=10, y=25, height=22)
-CmdOpt_Exec_Btn1.place(y=25, width=59, height=22)
-Args_Lbl1.place(x=10, y=55)
-Args_St1.place(x=10, y=75)
-Args_Clear_Btn1.place(y=55, width=59, height=19)
-Args_Paste_Btn1.place(y=55, width=83, height=19)
+CmdOpt_Lbl1.place(x=5, y=4)
+CmdOpt_Cb1.place(x=5, y=20, height=22)
+CmdOpt_Exec_Btn1.place(y=20, width=59, height=22)
+Args_Lbl1.place(x=5, y=54)
+Args_St1.place(x=5, y=70)
+Args_Clear_Btn1.place(y=51, width=59, height=19)
+Args_Paste_Btn1.place(y=51, width=83, height=19)
 
 Root.mainloop()
 Root.quit()
