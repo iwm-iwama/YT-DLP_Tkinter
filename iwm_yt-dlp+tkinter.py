@@ -1,7 +1,7 @@
-#!python3
+#!/usr/bin/python3
 #coding:utf-8
 
-VERSION = "YT-DLP+Tkinter Ver.iwm20240206"
+VERSION = "YT-DLP+Tkinter Ver.iwm20240211"
 
 import shutil
 import subprocess
@@ -57,11 +57,11 @@ def Sub_YtDlp_Update():
 
 def Sub_Root_Resize(e):
 	if e.widget is Root:
-		CmdOpt_Cb1.place(width=e.width-167)
-		CmdOpt_Exec_Btn1.place(x=e.width-157)
-		Args_St1.place(width=e.width-5, height=e.height-77)
-		Args_Clear_Btn1.place(x=e.width-157)
-		Args_Paste_Btn1.place(x=e.width-97)
+		CmdOpt_Cb1.place(width=e.width-165)
+		CmdOpt_Exec_Btn1.place(x=e.width-160)
+		Args_St1.place(width=e.width-5, height=e.height-78)
+		Args_Clear_Btn1.place(x=e.width-160)
+		Args_Paste_Btn1.place(x=e.width-100)
 
 def Sub_CmdOpt_Cb1_ContextMenu(e):
 	obj1 = CmdOpt_Cb1
@@ -275,7 +275,7 @@ Root.title(VERSION)
 CmdOpt_Lbl1 = Tk.Label(text="TY-DLP コマンド／オプション", font=("Helvetica", 10, "bold"), fg="white", bg="dimgray")
 
 a1 = CmdOpt.strip().split("\n")
-CmdOpt_Cb1 = Tk_Ttk.Combobox(Root, font=("Courier", 11), values=(a1))
+CmdOpt_Cb1 = Tk_Ttk.Combobox(Root, font=("Courier", 10), values=(a1))
 obj1 = CmdOpt_Cb1
 obj1.bind("<Button-3>", Sub_CmdOpt_Cb1_ContextMenu)
 obj1.insert("end", a1[0])
@@ -330,8 +330,8 @@ obj1.add_command(label="全コピー", command=Sub_St_Copy_All(obj=Args_St1))
 obj1.add_command(label="全カット", command=Sub_St_Cut_All(obj=Args_St1))
 obj1.add_command(label="ペースト", command=Sub_St_Paste_All(obj=Args_St1))
 
-Args_Clear_Btn1 = Tk.Button(Root, text="クリア", font=("Helvetica", 8), fg="white", bg="darkblue", relief="flat", cursor="hand2", command=Sub_St_Clear_All(obj=Args_St1))
-Args_Paste_Btn1 = Tk.Button(Root, text="ペースト", font=("Helvetica", 8), fg="white", bg="mediumblue", relief="flat", cursor="hand2", command=Sub_St_Paste_All(obj=Args_St1))
+Args_Clear_Btn1 = Tk.Button(Root, text="クリア", font=("Helvetica", 9), fg="white", bg="darkblue", relief="flat", cursor="hand2", command=Sub_St_Clear_All(obj=Args_St1))
+Args_Paste_Btn1 = Tk.Button(Root, text="ペースト", font=("Helvetica", 9), fg="white", bg="mediumblue", relief="flat", cursor="hand2", command=Sub_St_Paste_All(obj=Args_St1))
 
 #-------------------------------------------------------------------------------
 # Main
@@ -341,13 +341,13 @@ Sub_Terminal_Reposition()
 Sub_YtDlp_Update()
 
 # Sub_Root_Resize(e) で自動調整
-CmdOpt_Lbl1.place(x=5, y=4)
-CmdOpt_Cb1.place(x=5, y=20, height=22)
-CmdOpt_Exec_Btn1.place(y=20, width=59, height=22)
-Args_Lbl1.place(x=5, y=54)
-Args_St1.place(x=5, y=70)
-Args_Clear_Btn1.place(y=51, width=59, height=19)
-Args_Paste_Btn1.place(y=51, width=83, height=19)
+CmdOpt_Lbl1.place(x=5, y=3)
+CmdOpt_Cb1.place(x=5, y=23, height=20)
+CmdOpt_Exec_Btn1.place(y=23, width=60, height=20)
+Args_Lbl1.place(x=5, y=53)
+Args_St1.place(x=5, y=73)
+Args_Clear_Btn1.place(y=53, width=60, height=20)
+Args_Paste_Btn1.place(y=53, width=82, height=20)
 
 Root.mainloop()
 Root.quit()
