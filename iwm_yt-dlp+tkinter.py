@@ -38,7 +38,7 @@ def Sub_Terminal_Reposition():
 		pass
 
 def Sub_YtDlp_Update():
-	print("\033[97;44m YT-DLP Update \033[0m")
+	print("\033[97;44m YT-DLP Update ... \033[0m")
 	CMD = "yt-dlp"
 	if shutil.which(CMD):
 		print(
