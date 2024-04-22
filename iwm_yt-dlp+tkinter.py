@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-VERSION = "YT-DLP+Tkinter Ver.iwm20240211"
+VERSION = "YT-DLP+Tkinter Ver.iwm20240421"
 
 import shutil
 import subprocess
@@ -11,6 +11,7 @@ import tkinter.ttk as Tk_Ttk
 
 from ctypes import *
 from ctypes.wintypes import *
+from tkinter import messagebox
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -26,42 +27,42 @@ echo
 # Function
 #-------------------------------------------------------------------------------
 def Sub_Clear():
-	# WindowsでESCを有効にするおまじない
-	subprocess.run("cls || clear", shell=True)
+	# おまじない
+	subprocess.run("clear || cls", shell=True)
+
+def Sub_YtDlp_Update():
+	Cmd = "yt-dlp"
+	if shutil.which(Cmd):
+		Select = messagebox.askyesno("", "YT-DLP の更新を確認しますか ?")
+		if Select == True:
+			print(
+				"\033[97;44m " + Cmd + " \033[0m\n" +
+				subprocess.run((Cmd + " --update-to nightly"), shell=True, capture_output=True, text=True).stdout.strip() + "\n" +
+				"\033[97m(END)\033[0m"
+			)
+	else:
+		print(
+			"\033[95mYT-DLP は以下のサイトから入手できます。\n" +
+			"\033[5G" + "\033[97mhttps://github.com/yt-dlp/yt-dlp#release-files\n" +
+			"\033[5G" + "\033[96m・Recommended（推奨版）" +
+			"\033[0m"
+		)
 
 def Sub_Terminal_Reposition():
 	# Windows以外で例外発生
 	try:
 		hwnd = windll.user32.GetForegroundWindow()
-		windll.user32.MoveWindow(hwnd, int(30), int(60), int(640), int(Root.winfo_screenheight()-120), True)
+		windll.user32.MoveWindow(hwnd, int(30), int(60), int((Root.winfo_screenwidth() / 2) - 240), int(Root.winfo_screenheight() - 120), True)
 	except(NameError, SyntaxError):
 		pass
 
-def Sub_YtDlp_Update():
-	print("\033[97;44m YT-DLP Update ... \033[0m")
-	CMD = "yt-dlp"
-	if shutil.which(CMD):
-		print(
-			"\033[93m",
-			subprocess.run(CMD + " --update-to nightly", shell=True, capture_output=True, text=True).stdout,
-			"\033[0m"
-		)
-	else:
-		print(
-			"   \033[91mNot Installed.\033[0m\n",
-			"   YT-DLP は以下のサイトから入手できます。\n",
-			"     \033[93mhttps://github.com/yt-dlp/yt-dlp#release-files\033[0m\n",
-			"     \033[96m・Recommended（推奨版）\033[0m"
-		)
-	print("\033[97;44m (END) \033[0m")
-
 def Sub_Root_Resize(e):
 	if e.widget is Root:
-		CmdOpt_Cb1.place(width=e.width-165)
-		CmdOpt_Exec_Btn1.place(x=e.width-160)
-		Args_St1.place(width=e.width-5, height=e.height-78)
-		Args_Clear_Btn1.place(x=e.width-160)
-		Args_Paste_Btn1.place(x=e.width-100)
+		CmdOpt_Cb1.place(width=e.width-152)
+		CmdOpt_Exec_Btn1.place(x=e.width-147)
+		Args_St1.place(width=e.width-10, height=e.height-79)
+		Args_Clear_Btn1.place(x=e.width-147)
+		Args_Paste_Btn1.place(x=e.width-85)
 
 def Sub_CmdOpt_Cb1_ContextMenu(e):
 	obj1 = CmdOpt_Cb1
@@ -158,15 +159,21 @@ def Sub_CmdOpt_Exec_Btn1(e=None):
 	if len(a1) == 0:
 		print("\033[39;101m No input data! \033[0m")
 		return
+	Cnt = 0
 	for _s1 in a1:
 		_s1 = _s1.strip()
-		print("\033[97;44m ", _s1, " \033[0m")
+		print("\033[97;44m " + _s1 + " \033[0m")
 		try:
 			subprocess.run(_s1, shell=True)
+			Cnt += 1
 		except:
 			break
-		print("\033[97;44m (END) \033[0m\n")
+		print("\033[97m(END)\033[0m\n")
 	a1 = []
+	AddStr = str(Cnt) + " Count"
+	if Cnt > 1:
+		AddStr += "s"
+	print("\033[97;104m " + AddStr + " \033[0m")
 
 def Sub_Args_St1_ContextMenu(e):
 	obj1 = Args_St1
@@ -254,16 +261,18 @@ def Sub_St_Paste_All(obj=None, e=None):
 # Window Root
 #-------------------------------------------------------------------------------
 Root = Tk.Tk()
+# Window 初期サイズ
 min = {
-	"W": 400,
-	"H": 240
+	"W": 480,
+	"H": 300
 }
+# Window 初期ポジション
 pos = {
 	"X": int((Root.winfo_screenwidth() - min["W"]) / 2),
 	"Y": int((Root.winfo_screenheight() - min["H"]) / 2)
 }
 Root.bind("<Configure>", Sub_Root_Resize)
-Root.configure(bg="dimgray")
+Root.configure(bg="#555")
 Root.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
 Root.minsize(width=min["W"], height=min["H"])
 Root.resizable(width=True, height=True)
@@ -272,7 +281,7 @@ Root.title(VERSION)
 #-------------------------------------------------------------------------------
 # Command & Option
 #-------------------------------------------------------------------------------
-CmdOpt_Lbl1 = Tk.Label(text="TY-DLP コマンド／オプション", font=("Helvetica", 10, "bold"), fg="white", bg="dimgray")
+CmdOpt_Lbl1 = Tk.Label(text="TY-DLP コマンド／オプション", font=("Helvetica", 10, "bold"), fg="white", bg="#555")
 
 a1 = CmdOpt.strip().split("\n")
 CmdOpt_Cb1 = Tk_Ttk.Combobox(Root, font=("Courier", 10), values=(a1))
@@ -304,13 +313,12 @@ CmdOpt_Exec_Btn1 = Tk.Button(Root, text="実行", font=("Helvetica", 10), fg="#f
 #-------------------------------------------------------------------------------
 # Argument
 #-------------------------------------------------------------------------------
-Args_Lbl1 = Tk.Label(text="YouTube URL／改行区切り", font=("Helvetica", 10, "bold"), fg="white", bg="dimgray")
+Args_Lbl1 = Tk.Label(text="YouTube URL／改行区切り", font=("Helvetica", 10, "bold"), fg="white", bg="#555")
 
-Args_St1 = Tk_St.ScrolledText(Root, font=("Courier", 11), relief="flat", borderwidth=4, undo="true", highlightthickness=1, highlightbackground="#777777", highlightcolor="#7777ff", insertofftime=0)
+Args_St1 = Tk_St.ScrolledText(Root, font=("Courier", 11), relief="flat", borderwidth=0, undo="true", insertofftime=0)
 obj1 = Args_St1
 obj1.bind("<Button-3>", Sub_Args_St1_ContextMenu)
 obj1.configure(state="normal")
-obj1.focus_set()
 
 # 範囲指定あり
 St_ContextMenu_Select = Tk.Menu(Root, font=("Helvetica", 10), tearoff=0)
@@ -330,24 +338,25 @@ obj1.add_command(label="全コピー", command=Sub_St_Copy_All(obj=Args_St1))
 obj1.add_command(label="全カット", command=Sub_St_Cut_All(obj=Args_St1))
 obj1.add_command(label="ペースト", command=Sub_St_Paste_All(obj=Args_St1))
 
-Args_Clear_Btn1 = Tk.Button(Root, text="クリア", font=("Helvetica", 9), fg="white", bg="darkblue", relief="flat", cursor="hand2", command=Sub_St_Clear_All(obj=Args_St1))
+Args_Clear_Btn1 = Tk.Button(Root, text="クリア", font=("Helvetica", 9), fg="white", bg="navy", relief="flat", cursor="hand2", command=Sub_St_Clear_All(obj=Args_St1))
 Args_Paste_Btn1 = Tk.Button(Root, text="ペースト", font=("Helvetica", 9), fg="white", bg="mediumblue", relief="flat", cursor="hand2", command=Sub_St_Paste_All(obj=Args_St1))
 
 #-------------------------------------------------------------------------------
 # Main
 #-------------------------------------------------------------------------------
-Sub_Clear()
-Sub_Terminal_Reposition()
-Sub_YtDlp_Update()
-
-# Sub_Root_Resize(e) で自動調整
 CmdOpt_Lbl1.place(x=5, y=3)
 CmdOpt_Cb1.place(x=5, y=23, height=20)
-CmdOpt_Exec_Btn1.place(y=23, width=60, height=20)
+CmdOpt_Exec_Btn1.place(y=23, width=62, height=20)
 Args_Lbl1.place(x=5, y=53)
 Args_St1.place(x=5, y=73)
-Args_Clear_Btn1.place(y=53, width=60, height=20)
-Args_Paste_Btn1.place(y=53, width=82, height=20)
+Args_Clear_Btn1.place(y=53, width=62, height=20)
+Args_Paste_Btn1.place(y=53, width=80, height=20)
+
+# 前処理
+Sub_Terminal_Reposition()
+Sub_Clear()
+Sub_YtDlp_Update()
+CmdOpt_Cb1.focus_force()
 
 Root.mainloop()
 Root.quit()
