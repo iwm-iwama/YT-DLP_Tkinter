@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 #coding:utf-8
 
-VERSION = "YT-DLP+Tkinter Ver.iwm20240421"
+PROGRAM = "YT-DLP+Tkinter"
+VERSION = "Ver.iwm20240504"
 
 import shutil
 import subprocess
@@ -21,6 +22,7 @@ CmdOpt = """
 yt-dlp -f b
 yt-dlp -x --audio-format mp3
 echo
+yt-dlp --help
 """
 
 #-------------------------------------------------------------------------------
@@ -30,22 +32,55 @@ def Sub_Clear():
 	# おまじない
 	subprocess.run("clear || cls", shell=True)
 
+def Sub_SimpleHelp():
+	print(
+		"\033[97;104m 簡易ヘルプ \033[0m" +
+		"\n" +
+		"\033[5G"  + "\033[93mYT-DLP コマンド／オプション" +
+		"\n" +
+		"\033[9G"  + "\033[96myt-dlp -f b" +
+		"\n" +
+		"\033[14G" + "\033[37m動画ファイルを最高画質でダウンロード" +
+		"\n" +
+		"\033[9G"  + "\033[96myt-dlp -x --audio-format mp3" +
+		"\n" +
+		"\033[14G" + "\033[37m音声ファイルをMP3でダウンロード" +
+		"\n" +
+		"\033[9G"  + "\033[96mecho" +
+		"\n" +
+		"\033[14G" + "\033[37mテスト" +
+		"\n" +
+		"\033[9G"  + "\033[96myt-dlp --help" +
+		"\n" +
+		"\033[14G" + "\033[37mオプション・ヘルプ" +
+		"\n" +
+		"\033[97;104m (END) \033[0m" +
+		"\n"
+	)
+
 def Sub_YtDlp_Update():
 	Cmd = "yt-dlp"
 	if shutil.which(Cmd):
-		Select = messagebox.askyesno("", "YT-DLP の更新を確認しますか ?")
+		Select = messagebox.askyesno(PROGRAM, "YT-DLP の更新を確認しますか ?")
 		if Select == True:
 			print(
-				"\033[97;44m " + Cmd + " \033[0m\n" +
-				subprocess.run((Cmd + " --update-to nightly"), shell=True, capture_output=True, text=True).stdout.strip() + "\n" +
-				"\033[97m(END)\033[0m"
+				"\033[97;104m " + Cmd + " \033[0m" +
+				"\n" +
+				"    " +
+				"\033[97m" + subprocess.run((Cmd + " --update-to nightly"), shell=True, capture_output=True, text=True).stdout.strip().replace("\n", "\n    ") +
+				"\n" +
+				"\033[97;104m (END) \033[0m" +
+				"\n"
 			)
+		Sub_SimpleHelp()
 	else:
 		print(
-			"\033[95mYT-DLP は以下のサイトから入手できます。\n" +
-			"\033[5G" + "\033[97mhttps://github.com/yt-dlp/yt-dlp#release-files\n" +
-			"\033[5G" + "\033[96m・Recommended（推奨版）" +
-			"\033[0m"
+			"\033[97;101m YT-DLP は以下のサイトから入手できます。 \033[0m" +
+			"\n" +
+			"\033[5G" + "\033[97mhttps://github.com/yt-dlp/yt-dlp#release-files" +
+			"\n" +
+			"\033[9G" + "\033[92mRecommended（推奨版）" +
+			"\033[0m" + "\n"
 		)
 
 def Sub_Terminal_Reposition():
@@ -155,25 +190,23 @@ def Sub_CmdOpt_Exec_Btn1(e=None):
 			_ln = _ln.strip()
 			if len(_ln) > 0:
 				a1 += [(s2 + " " + _ln)]
+	else:
+		a1 += [s2]
 	Sub_Clear()
-	if len(a1) == 0:
-		print("\033[39;101m No input data! \033[0m")
-		return
 	Cnt = 0
 	for _s1 in a1:
 		_s1 = _s1.strip()
-		print("\033[97;44m " + _s1 + " \033[0m")
+		print("\033[97;104m " + _s1 + " \033[0m")
 		try:
 			subprocess.run(_s1, shell=True)
 			Cnt += 1
 		except:
 			break
-		print("\033[97m(END)\033[0m\n")
 	a1 = []
 	AddStr = str(Cnt) + " Count"
 	if Cnt > 1:
 		AddStr += "s"
-	print("\033[97;104m " + AddStr + " \033[0m")
+	print("\n" + "\033[97;104m (END) " + AddStr + " \033[0m")
 
 def Sub_Args_St1_ContextMenu(e):
 	obj1 = Args_St1
@@ -276,12 +309,12 @@ Root.configure(bg="#555")
 Root.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
 Root.minsize(width=min["W"], height=min["H"])
 Root.resizable(width=True, height=True)
-Root.title(VERSION)
+Root.title(PROGRAM + " " + VERSION)
 
 #-------------------------------------------------------------------------------
 # Command & Option
 #-------------------------------------------------------------------------------
-CmdOpt_Lbl1 = Tk.Label(text="TY-DLP コマンド／オプション", font=("Helvetica", 10, "bold"), fg="white", bg="#555")
+CmdOpt_Lbl1 = Tk.Label(text="YT-DLP コマンド／オプション", font=("Helvetica", 10, "bold"), fg="white", bg="#555")
 
 a1 = CmdOpt.strip().split("\n")
 CmdOpt_Cb1 = Tk_Ttk.Combobox(Root, font=("Courier", 10), values=(a1))
