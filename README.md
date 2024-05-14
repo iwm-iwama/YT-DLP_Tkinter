@@ -5,7 +5,7 @@
 【動作確認済】
 
 	Windows10: MSYS2/MinGW-w64
-	Linux: Debian/Ubuntu
+	Linux
 
 【このスクリプトについて】
 
