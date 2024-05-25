@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20240513"
+VERSION = "Ver.iwm20240518"
 
 import shutil
 import subprocess
@@ -95,12 +95,12 @@ def Sub_Terminal_Reposition():
 	# Windows以外で例外発生
 	try:
 		hwnd = windll.user32.GetForegroundWindow()
-		windll.user32.MoveWindow(hwnd, int(30), int(60), int((Root.winfo_screenwidth() / 2) - 240), int(Root.winfo_screenheight() - 120), True)
+		windll.user32.MoveWindow(hwnd, int(30), int(60), int((Win0.winfo_screenwidth() / 2) - 240), int(Win0.winfo_screenheight() - 120), True)
 	except(NameError, SyntaxError):
 		pass
 
-def Sub_Root_Resize(e):
-	if e.widget is Root:
+def Sub_Win0_Resize(e):
+	if e.widget is Win0:
 		List_Cmd_Cb1.place(width = e.width - 152)
 		List_Cmd_Exec_Btn1.place(x = e.width - 147)
 		Args_St1.place(width = e.width - 10, height = e.height - 79)
@@ -169,7 +169,7 @@ def Sub_Cb_Paste_Select(obj = None, e = None):
 		return
 	def inner():
 		try:
-			text = Root.selection_get(selection = "CLIPBOARD").rstrip()
+			text = Win0.selection_get(selection = "CLIPBOARD").rstrip()
 			obj.delete("sel.first", "sel.last")
 			obj.insert("insert", text)
 		except:
@@ -181,7 +181,7 @@ def Sub_Cb_Paste_All(obj = None, e = None):
 		return
 	def inner():
 		try:
-			text = Root.selection_(selection = "CLIPBOARD").rstrip()
+			text = Win0.selection_(selection = "CLIPBOARD").rstrip()
 			obj.insert("insert", text)
 		except:
 			pass
@@ -217,10 +217,9 @@ def Sub_List_Cmd_Exec_Btn1(e = None):
 		###print("Existing PS: " + str(_ps))
 		while _ps.poll() is None:
 			###print("Waiting PS: " + str(_ps))
-			time.sleep(1.0)
+			time.sleep(5.0)
 		i1 -= 1
 		###print(F"Remaining PS Count: {i1}")
-		time.sleep(1.0)
 	# PS終了処理
 	AddStr = "(END) " + str(Cnt) + " Count"
 	if Cnt > 1:
@@ -289,7 +288,7 @@ def Sub_St_Paste_Select(obj = None, e = None):
 		return
 	def inner():
 		try:
-			text = Root.selection_get(selection = "CLIPBOARD").rstrip()
+			text = Win0.selection_get(selection = "CLIPBOARD").rstrip()
 			obj.delete("sel.first", "sel.last")
 			obj.insert("insert", text + "\n")
 			obj.see("insert")
@@ -302,7 +301,7 @@ def Sub_St_Paste_All(obj = None, e = None):
 		return
 	def inner():
 		try:
-			text = Root.selection_get(selection = "CLIPBOARD").rstrip()
+			text = Win0.selection_get(selection = "CLIPBOARD").rstrip()
 			obj.insert("insert", text + "\n")
 			obj.see("insert")
 		except:
@@ -310,9 +309,9 @@ def Sub_St_Paste_All(obj = None, e = None):
 	return inner
 
 #-------------------------------------------------------------------------------
-# Window Root
+# Window [0]
 #-------------------------------------------------------------------------------
-Root = Tk.Tk()
+Win0 = Tk.Tk()
 
 # Window 初期サイズ
 min = {
@@ -321,17 +320,17 @@ min = {
 }
 # Window 初期ポジション
 pos = {
-	"X": int((Root.winfo_screenwidth() - min["W"]) / 2),
-	"Y": int((Root.winfo_screenheight() - min["H"]) / 2)
+	"X": int((Win0.winfo_screenwidth() - min["W"]) / 2),
+	"Y": int((Win0.winfo_screenheight() - min["H"]) / 2)
 }
-Root.bind("<Configure>", Sub_Root_Resize)
-Root.configure(bg = "#555")
-Root.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
-Root.minsize(width = min["W"], height = min["H"])
-Root.resizable(width = True, height = True)
-Root.title(PROGRAM + " " + VERSION)
+Win0.bind("<Configure>", Sub_Win0_Resize)
+Win0.configure(bg = "#555")
+Win0.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
+Win0.minsize(width = min["W"], height = min["H"])
+Win0.resizable(width = True, height = True)
+Win0.title(PROGRAM + " " + VERSION)
 # 使用不可：Windows,Linux互換問題
-#   Root.attributes()
+#   Win0.attributes()
 
 #-------------------------------------------------------------------------------
 # Command & Option
@@ -339,14 +338,14 @@ Root.title(PROGRAM + " " + VERSION)
 List_Cmd_Lbl1 = Tk.Label(text = "YT-DLP コマンド", font = ("Helvetica", 10, "bold"), fg = "white", bg = "#555")
 
 a1 = List_Cmd.strip().split("\n")
-List_Cmd_Cb1 = Tk_Ttk.Combobox(Root, font = ("Courier", 10), values = (a1))
+List_Cmd_Cb1 = Tk_Ttk.Combobox(Win0, font = ("Courier", 10), values = (a1))
 obj1 = List_Cmd_Cb1
 obj1.bind("<Button-3>", Sub_List_Cmd_Cb1_ContextMenu)
 obj1.insert("end", a1[0])
 a1 = []
 
 # 範囲指定あり
-Cb_ContextMenu_Select = Tk.Menu(Root, tearoff = 0, font = ("Helvetica", 10))
+Cb_ContextMenu_Select = Tk.Menu(Win0, tearoff = 0, font = ("Helvetica", 10))
 obj1 = Cb_ContextMenu_Select
 obj1.add_command(label = "クリア", command = Sub_Cb_Clear_Select(obj = List_Cmd_Cb1))
 obj1.add_separator()
@@ -355,7 +354,7 @@ obj1.add_command(label = "カット", command = Sub_Cb_Cut_Select(obj = List_Cmd
 obj1.add_command(label = "ペースト", command = Sub_Cb_Paste_Select(obj = List_Cmd_Cb1))
 
 # 範囲指定なし
-Cb_ContextMenu_All = Tk.Menu(Root, tearoff = 0, font = ("Helvetica", 10))
+Cb_ContextMenu_All = Tk.Menu(Win0, tearoff = 0, font = ("Helvetica", 10))
 obj1 = Cb_ContextMenu_All
 obj1.add_command(label = "全クリア", command = Sub_Cb_Clear_All(obj = List_Cmd_Cb1))
 obj1.add_separator()
@@ -363,20 +362,20 @@ obj1.add_command(label = "全コピー", command = Sub_Cb_Copy_All(obj = List_Cm
 obj1.add_command(label = "全カット", command = Sub_Cb_Cut_All(obj = List_Cmd_Cb1))
 obj1.add_command(label = "ペースト", command = Sub_Cb_Paste_All(obj = List_Cmd_Cb1))
 
-List_Cmd_Exec_Btn1 = Tk.Button(Root, text = "実行", font = ("Helvetica", 10), fg = "#ffffff", bg = "crimson", relief = "flat", cursor = "hand2", command = Sub_List_Cmd_Exec_Btn1)
+List_Cmd_Exec_Btn1 = Tk.Button(Win0, text = "実行", font = ("Helvetica", 10), fg = "#ffffff", bg = "crimson", relief = "flat", cursor = "hand2", command = Sub_List_Cmd_Exec_Btn1)
 
 #-------------------------------------------------------------------------------
 # Argument
 #-------------------------------------------------------------------------------
 Args_Lbl1 = Tk.Label(text = "YouTube URL（改行区切り）", font = ("Helvetica", 10, "bold"), fg = "white", bg = "#555")
 
-Args_St1 = Tk_St.ScrolledText(Root, font = ("Courier", 11), relief = "flat", borderwidth = 0, undo = "true", insertofftime = 0)
+Args_St1 = Tk_St.ScrolledText(Win0, font = ("Courier", 11), relief = "flat", borderwidth = 0, undo = "true", insertofftime = 0)
 obj1 = Args_St1
 obj1.bind("<Button-3>", Sub_Args_St1_ContextMenu)
 obj1.configure(state = "normal")
 
 # 範囲指定あり
-St_ContextMenu_Select = Tk.Menu(Root, font = ("Helvetica", 10), tearoff = 0)
+St_ContextMenu_Select = Tk.Menu(Win0, font = ("Helvetica", 10), tearoff = 0)
 obj1 = St_ContextMenu_Select
 obj1.add_command(label = "クリア", command = Sub_St_Clear_Select(obj = Args_St1))
 obj1.add_separator()
@@ -385,7 +384,7 @@ obj1.add_command(label = "カット", command = Sub_St_Cut_Select(obj = Args_St1
 obj1.add_command(label = "ペースト", command = Sub_St_Paste_Select(obj = Args_St1))
 
 # 範囲指定なし
-St_ContextMenu_All = Tk.Menu(Root, font = ("Helvetica", 10), tearoff = 0)
+St_ContextMenu_All = Tk.Menu(Win0, font = ("Helvetica", 10), tearoff = 0)
 obj1 = St_ContextMenu_All
 obj1.add_command(label = "全クリア", command = Sub_St_Clear_All(obj = Args_St1))
 obj1.add_separator()
@@ -393,8 +392,8 @@ obj1.add_command(label = "全コピー", command = Sub_St_Copy_All(obj = Args_St
 obj1.add_command(label = "全カット", command = Sub_St_Cut_All(obj = Args_St1))
 obj1.add_command(label = "ペースト", command = Sub_St_Paste_All(obj = Args_St1))
 
-Args_Clear_Btn1 = Tk.Button(Root, text = "クリア", font = ("Helvetica", 9), fg = "white", bg = "navy", relief = "flat", cursor = "hand2", command = Sub_St_Clear_All(obj = Args_St1))
-Args_Paste_Btn1 = Tk.Button(Root, text = "ペースト", font = ("Helvetica", 9), fg = "white", bg = "mediumblue", relief = "flat", cursor = "hand2", command = Sub_St_Paste_All(obj = Args_St1))
+Args_Clear_Btn1 = Tk.Button(Win0, text = "クリア", font = ("Helvetica", 9), fg = "white", bg = "navy", relief = "flat", cursor = "hand2", command = Sub_St_Clear_All(obj = Args_St1))
+Args_Paste_Btn1 = Tk.Button(Win0, text = "ペースト", font = ("Helvetica", 9), fg = "white", bg = "mediumblue", relief = "flat", cursor = "hand2", command = Sub_St_Paste_All(obj = Args_St1))
 
 #-------------------------------------------------------------------------------
 # Main
@@ -413,5 +412,5 @@ Sub_Clear()
 Sub_YtDlp_Update()
 List_Cmd_Cb1.focus_force()
 
-Root.mainloop()
-Root.quit()
+Win0.mainloop()
+Win0.quit()
