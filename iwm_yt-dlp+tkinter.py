@@ -2,10 +2,11 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20240606"
+VERSION = "Ver.iwm20240626"
 
 import shutil
 import subprocess
+import sys
 import time
 import tkinter as Tk
 import tkinter.scrolledtext as Tk_St
@@ -19,515 +20,496 @@ from tkinter import messagebox
 # My Config
 #-------------------------------------------------------------------------------
 # YT-DLP Command & Option
-List_Command = """
+LIST_COMMAND = """
 yt-dlp -f b
 yt-dlp -x --audio-format mp3
 yt-dlp --help
 echo
+wget -rH -nc
 """
 
 #-------------------------------------------------------------------------------
-# Const
+# Window[0]
 #-------------------------------------------------------------------------------
-H1_BGN = "\033[97;44m$ " + (" " * 70) + "\033[3G"
-H1_END = "\033[49m"
+W0 = Tk.Tk()
 
-#-------------------------------------------------------------------------------
-# Function
-#-------------------------------------------------------------------------------
-def Sub_Clear():
-	# おまじない
-	subprocess.run("clear || cls", shell = True)
-
-def Sub_SimpleHelp():
-	print(
-		"\033[97;104m 簡易ヘルプ \033[0m"
-		+ "\n"
-		+ "\033[5G"
-		+ "\033[93mYT-DLP コマンド／オプション"
-		+ "\n"
-		+ "\033[9G"
-		+ "\033[96myt-dlp -f b"
-		+ "\n"
-		+ "\033[14G"
-		+ "\033[97m動画ファイルを最高画質でダウンロード"
-		+ "\n"
-		+ "\033[9G"
-		+ "\033[96myt-dlp -x --audio-format mp3"
-		+ "\n"
-		+ "\033[14G"
-		+ "\033[97m音声ファイルをMP3でダウンロード"
-		+ "\n"
-		+ "\033[9G"
-		+ "\033[96mecho"
-		+ "\n"
-		+ "\033[14G"
-		+ "\033[97mテスト"
-		+ "\n"
-		+ "\033[9G"
-		+ "\033[96myt-dlp --help"
-		+ "\n"
-		+ "\033[14G"
-		+ "\033[97mオプション・ヘルプ"
-		+ "\n"
-		+ "\033[97;104m (END) \033[0m"
-		+ "\n"
-	)
-
-def Sub_YtDlp_Update():
-	Cmd = "yt-dlp"
-	if shutil.which(Cmd):
-		# ダイアログは最前面に"固定表示されない"仕様のようなので注意!!!!
-		Select = messagebox.askyesno(PROGRAM, "YT-DLP の更新を確認しますか ?")
-		if Select == True:
-			print(
-				"\033[97;104m "
-				+ Cmd
-				+ " \033[0m"
-				+ "\n"
-				+ "\033[5G"
-				+ "\033[38;2;255;192;0m"
-				+ subprocess.run(
-					(Cmd + " --update-to nightly"),
-					shell = True,
-					capture_output = True,
-					text = True
-				)
-				.stdout.strip()
-				.replace("\n", "\n    ")
-				+ "\n"
-				+ "\033[97;104m (END) \033[0m"
-				+ "\n"
-			)
-		Sub_SimpleHelp()
-	else:
+class _Terminal:
+	def Help():
 		print(
-			"\033[97;101m YT-DLP は以下のサイトから入手できます。 \033[0m"
-			+ "\n"
-			+ "\033[5G"
-			+ "\033[97mhttps://github.com/yt-dlp/yt-dlp#release-files"
-			+ "\n"
-			+ "\033[9G"
-			+ "\033[92mRecommended（推奨版）"
-			+ "\033[0m"
-			+ "\n"
+			"\033[97;44m " +
+			"簡易ヘルプ" +
+			" \033[0m" +
+			"\n" +
+			"\033[5G" +
+			"\033[93m" +
+			"YT-DLP コマンド／オプション" +
+			"\n" +
+			"\033[9G" +
+			"\033[96m" +
+			"yt-dlp -f b" +
+			"\n" +
+			"\033[14G" +
+			"\033[97m" +
+			"動画ファイルを最高画質でダウンロード" +
+			"\n" +
+			"\033[9G" +
+			"\033[96m" +
+			"yt-dlp -x --audio-format mp3" +
+			"\n" +
+			"\033[14G" +
+			"\033[97m" +
+			"音声ファイルをMC3でダウンロード" +
+			"\n" +
+			"\033[9G" +
+			"\033[96m" +
+			"yt-dlp --help" +
+			"\n" +
+			"\033[14G" +
+			"\033[97m" +
+			"オプション・ヘルプ" +
+			"\n" +
+			"\033[97;44m " +
+			"(END)" +
+			" \033[0m"
 		)
 
-def Sub_Terminal_Reposition():
-	# Windows以外で例外発生
+	def Clear():
+		# おまじない
+		subprocess.run("clear || cls", shell = True)
+
+	def YtDlp_Update():
+		Cmd = "yt-dlp"
+		if shutil.which(Cmd):
+			# ダイアログは最前面に "固定表示されない" 仕様のようなので注意!!!!
+			select = messagebox.askyesno(PROGRAM, "YT-DLP の更新を確認しますか ?")
+			if select == True:
+				print(
+					"\033[97;44m " +
+					Cmd +
+					" \033[0m" +
+					"\n" +
+					"\033[5G" +
+					"\033[38;2;255;192;0m" +
+					subprocess.run(
+						(Cmd + " --update-to nightly"),
+						shell = True,
+						capture_output = True,
+						text = True
+					).stdout.strip().replace("\n", "\n    ") +
+					"\n" +
+					"\033[97;44m " +
+					"(END)" +
+					" \033[0m"
+				)
+			print()
+			_Terminal.Help()
+		else:
+			print(
+				"\033[97;41m " +
+				"YT-DLP は以下のサイトから入手できます。" +
+				" \033[0m" +
+				"\n" +
+				"\033[5G" +
+				"\033[97m" +
+				"https://github.com/yt-dlp/yt-dlp#release-files" +
+				"\n" +
+				"\033[9G" +
+				"\033[96m" +
+				"Recommended（推奨版）" +
+				"\033[0m"
+			)
+
+class _C11:
+	global C11
+	C11 = Tk.Label(
+		text = "YT-DLP コマンド",
+		font = ("Helvetica", 9, "bold"),
+		fg = "white",
+		bg = "#555"
+	)
+	C11.place(x = 5, y = 4)
+
+class _C21:
+	def Clear(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			if select_all == True:
+				obj.delete("0", "end")
+			else:
+				obj.delete("sel.first", "sel.last")
+		return inner
+
+	def Copy(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			obj.clipboard_clear()
+			if select_all == True:
+				obj.clipboard_append(obj.get())
+			else:
+				obj.clipboard_append(obj.selection_get())
+		return inner
+
+	def Cut(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			obj.clipboard_clear()
+			if select_all == True:
+				obj.clipboard_append(obj.get())
+				obj.delete("0", "end")
+			else:
+				obj.clipboard_append(obj.selection_get())
+				obj.delete("sel.first", "sel.last")
+		return inner
+
+	def Paste(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			text = obj.selection_get(selection = "CLIPBOARD").rstrip()
+			if select_all == True:
+				pass
+			else:
+				obj.delete("sel.first", "sel.last")
+			obj.insert("insert", text)
+		return inner
+
+	def Button_1(e):
+		try:
+			global C21_ContextMenu
+			C21_ContextMenu.destroy()
+		except:
+			pass
+
+	def ButtonRelease_1(e):
+		obj1 = Tk.Menu(W0, tearoff = 0, font = ("Helvetica", 10))
+		if C21.selection_present():
+			obj1.add_command(label = "クリア", command = _C21.Clear(obj = C21, select_all = False))
+			obj1.add_separator()
+			obj1.add_command(label = "コピー", command = _C21.Copy(obj = C21, select_all = False))
+			obj1.add_command(label = "カット", command = _C21.Cut(obj = C21, select_all = False))
+			obj1.add_command(label = "ペースト", command = _C21.Paste(obj = C21, select_all = False))
+		obj1.post(e.x_root, e.y_root)
+		global C21_ContextMenu
+		C21_ContextMenu = obj1
+
+	def Button_3(e):
+		obj1 = Tk.Menu(W0, tearoff = 0, font = ("Helvetica", 10))
+		obj1.add_command(label = "全クリア", command = _C21.Clear(obj = C21, select_all = True))
+		obj1.add_separator()
+		obj1.add_command(label = "全コピー", command = _C21.Copy(obj = C21, select_all = True))
+		obj1.add_command(label = "全カット", command = _C21.Cut(obj = C21, select_all = True))
+		obj1.add_command(label = "ペースト", command = _C21.Paste(obj = C21, select_all = True))
+		obj1.post(e.x_root, e.y_root)
+		global C21_ContextMenu
+		C21_ContextMenu = obj1
+
+	a1 = LIST_COMMAND.strip().split("\n")
+
+	global C21
+	C21 = Tk_Ttk.Combobox(
+		W0,
+		font = ("Courier", 12),
+		values = (a1)
+	)
+	C21.place(x = 5, y = 23, height = 20)
+	C21.bind("<Button-1>", Button_1)
+	C21.bind("<ButtonRelease-1>", ButtonRelease_1)
+	C21.bind("<Button-3>", Button_3)
+	C21.insert("end", a1[0])
+
+class _C22:
+	def Click(e = None):
+		_Terminal.Clear()
+		TmBgn = time.time()
+		s1 = C41.get("1.0", "end-1c").strip()
+		s2 = C21.get().strip()
+		a1 = []
+		if len(s1) > 0:
+			for _opt in s1.split("\n"):
+				_opt = _opt.strip()
+				if len(_opt) > 0:
+					a1 += [(s2 + " " + _opt)]
+		else:
+			a1 += [s2]
+		Cnt = 0
+		List_PS = []
+		# PSExecリスト作成
+		for _s1 in a1:
+			print(f"\033[94m$ {_s1} \033[0m")
+			try:
+				_ps = subprocess.Popen(_s1, shell = True)
+				List_PS.append(_ps)
+				# 同期処理
+				if C23_Var.get() == 1:
+					# PS監視
+					while _ps.poll() is None:
+						time.sleep(0.016 * 10)
+				Cnt += 1
+			except:
+				pass
+		i1 = Cnt
+		# PS監視
+		for _ps in List_PS:
+			while _ps.poll() is None:
+				time.sleep(0.016 * 50)
+			i1 -= 1
+		# PS終了処理
+		TmEnd = time.time()
+		s1 = "(END) " + str(Cnt) + " count"
+		s2 = ""
+		if Cnt > 1:
+			s2 = "s"
+		s3 = " (%.3f sec)" % (TmEnd - TmBgn)
+		print(f"\033[97;44m$ {s1}{s2}{s3} \033[0m")
+
+	global C22
+	C22 = Tk.Button(
+		W0,
+		text = "実行",
+		font = ("Helvetica", 10),
+		fg = "#fff",
+		bg = "crimson",
+		relief = "flat",
+		cursor = "hand2",
+		command = Click
+	)
+	C22.place(y = 23, width = 62, height = 20)
+
+class _C23:
+	global C23, C23_Var
+	C23_Var = Tk.IntVar()
+	C23 = Tk.Checkbutton(
+		W0,
+		text = "同期処理",
+		font = ("Helvetica", 10),
+		fg = "#fff",
+		bg = "#555",
+		cursor = "hand2",
+		selectcolor = "#111",
+		variable = C23_Var
+	)
+	C23.place(y = 23, width = 75, height = 20)
+
+# C41 < C32, C32
+class _C41:
+	def Clear(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			if select_all == True:
+				obj.delete("1.0", "end")
+			else:
+				obj.delete("sel.first", "sel.last")
+		return inner
+
+	def Copy(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			obj.clipboard_clear()
+			if select_all == True:
+				obj.clipboard_append(obj.get("1.0", "end-1c"))
+			else:
+				obj.clipboard_append(obj.get("sel.first", "sel.last"))
+		return inner
+
+	def Cut(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			obj.clipboard_clear()
+			if select_all == True:
+				obj.clipboard_append(obj.get("1.0", "end-1c"))
+				obj.delete("1.0", "end")
+			else:
+				obj.clipboard_append(obj.get("sel.first", "sel.last"))
+				obj.delete("sel.first", "sel.last")
+		return inner
+
+	def Paste(obj = None, select_all = False, e = None):
+		if obj == None:
+			return
+		def inner():
+			text = obj.selection_get(selection = "CLIPBOARD").rstrip()
+			if select_all == True:
+				pass
+			else:
+				obj.delete("sel.first", "sel.last")
+			obj.insert("insert", text)
+			obj.see("insert")
+		return inner
+
+	def Add(obj = None, e = None):
+		if obj == None:
+			return
+		def inner():
+			s1 = obj.get("1.0", "end").strip()
+			if len(s1) > 0:
+				s1 += "\n"
+			obj.delete("1.0", "end")
+			s2 = ""
+			try:
+				s2 = obj.selection_get(selection = "CLIPBOARD").strip()
+				if len(s2) > 0:
+					s2 += "\n"
+			except:
+				pass
+			obj.insert("insert", (s1 + s2))
+			obj.see("insert")
+		return inner
+
+	def Button_1(e):
+		try:
+			global C41_ContextMenu
+			C41_ContextMenu.destroy()
+		except:
+			pass
+
+	def ButtonRelease_1(e):
+		obj1 = Tk.Menu(W0, font = ("Helvetica", 10), tearoff = 0)
+		if C41.tag_ranges("sel"):
+			obj1.add_command(label = "クリア", command = _C41.Clear(obj = C41, select_all = False))
+			obj1.add_separator()
+			obj1.add_command(label = "コピー", command = _C41.Copy(obj = C41, select_all = False))
+			obj1.add_command(label = "カット", command = _C41.Cut(obj = C41, select_all = False))
+			obj1.add_command(label = "ペースト", command = _C41.Paste(obj = C41, select_all = False))
+		obj1.post(e.x_root, e.y_root)
+		global C41_ContextMenu
+		C41_ContextMenu = obj1
+
+	def Button_3(e):
+		obj1 = Tk.Menu(W0, font = ("Helvetica", 10), tearoff = 0)
+		obj1.add_command(label = "全クリア", command = _C41.Clear(obj = C41, select_all = True))
+		obj1.add_separator()
+		obj1.add_command(label = "全コピー", command = _C41.Copy(obj = C41, select_all = True))
+		obj1.add_command(label = "全カット", command = _C41.Cut(obj = C41, select_all = True))
+		obj1.add_command(label = "ペースト", command = _C41.Paste(obj = C41, select_all = True))
+		obj1.post(e.x_root, e.y_root)
+		global C41_ContextMenu
+		C41_ContextMenu = obj1
+
+	global C41
+	C41 = Tk_St.ScrolledText(
+		W0,
+		font = ("Courier", 12),
+		relief = "flat",
+		borderwidth = 0,
+		undo = "true",
+		insertofftime = 0
+	)
+	C41.place(x = 5, y = 73)
+	C41.bind("<Button-1>", Button_1)
+	C41.bind("<ButtonRelease-1>", ButtonRelease_1)
+	C41.bind("<Button-3>", Button_3)
+	C41.configure(state = "normal")
+
+class _C31:
+	global C31
+	C31 = Tk.Label(
+		text = "YouTube URL（改行区切り）",
+		font = ("Helvetica", 9, "bold"),
+		fg = "white",
+		bg = "#555"
+	)
+	C31.place(x = 5, y = 52)
+
+class _C32:
+	global C32
+	C32 = Tk.Button(
+		W0,
+		text = "クリア",
+		font = ("Helvetica", 10),
+		fg = "white",
+		bg = "navy",
+		relief = "flat",
+		cursor = "hand2",
+		command = _C41.Clear(obj = C41, select_all = True)
+	)
+	C32.place(y = 53, width = 70, height = 20)
+
+class _C33:
+	global C33
+	C33 = Tk.Button(
+		W0,
+		text = "ペースト",
+		font = ("Helvetica", 10),
+		fg = "white",
+		bg = "mediumblue",
+		relief = "flat",
+		cursor = "hand2",
+		command = _C41.Add(obj = C41)
+	)
+	C33.place(y = 53, width = 75, height = 20)
+
+class _W0:
+	def Resize(e):
+		if e.widget is W0:
+			C21.place(width = e.width - 155)
+			C22.place(x = e.width - 150)
+			C23.place(x = e.width - 83)
+			C32.place(x = e.width - 150)
+			C33.place(x = e.width - 80)
+			C41.place(width = e.width - 10, height = e.height - 79)
+
+	# Window 初期サイズ
+	min = {
+		"W": 480,
+		"H": 200
+	}
+	# Window 初期ポジション
+	pos = {
+		"X": int((W0.winfo_screenwidth() - min["W"]) / 2),
+		"Y": int((W0.winfo_screenheight() - min["H"]) / 2)
+	}
+	W0.bind("<Configure>", Resize)
+	W0.configure(bg = "#555")
+	W0.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
+	W0.minsize(width = min["W"], height = min["H"])
+	W0.resizable(width = True, height = True)
+	W0.title(PROGRAM + " " + VERSION)
+	# 使用不可：Windows,Linux互換問題
+	#   W0.attributes()
+
+	# 表示位置変更
+	#   Windows以外で例外発生
 	try:
 		hwnd = windll.user32.GetForegroundWindow()
 		windll.user32.MoveWindow(
 			hwnd,
-			int(30),
-			int(60),
-			int((Win0.winfo_screenwidth() / 2) - 240),
-			int(Win0.winfo_screenheight() - 120),
+			30,
+			60,
+			int((W0.winfo_screenwidth() / 2) - 240),
+			int(W0.winfo_screenheight() - 120),
 			True
 		)
 	except(NameError, SyntaxError):
 		pass
 
-def Sub_Win0_Resize(e):
-	if e.widget is Win0:
-		M1_Cb1.place(width = e.width - 155)
-		M1_Btn1.place(x = e.width - 150)
-		M1_Chkbox1.place(x = e.width - 83)
-		M2_St1.place(width = e.width - 10, height = e.height - 79)
-		M2_Clear_Btn1.place(x = e.width - 150)
-		M2_Paste_Btn1.place(x = e.width - 85)
-
-def Sub_M1_Cb1_ContextMenu(e):
-	obj1 = M1_Cb1
-	obj2 = None
-	if obj1.selection_present() == True:
-		obj2 = M1_ContextMenu_Select
-	else:
-		obj2 = M1_ContextMenu_All
-	obj2.post(e.x_root, e.y_root)
-
-def Sub_Cb_Clear_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.delete("sel.first", "sel.last")
-	return inner
-
-def Sub_Cb_Clear_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.delete("0", "end")
-	return inner
-
-def Sub_Cb_Copy_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.selection_get())
-	return inner
-
-def Sub_Cb_Copy_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.get())
-	return inner
-
-def Sub_Cb_Cut_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.selection_get())
-		obj.delete("sel.first", "sel.last")
-	return inner
-
-def Sub_Cb_Cut_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.get())
-		obj.delete("0", "end")
-	return inner
-
-def Sub_Cb_Paste_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		try:
-			text = Win0.selection_get(selection = "CLIPBOARD").rstrip()
-			obj.delete("sel.first", "sel.last")
-			obj.insert("insert", text)
-		except:
-			pass
-	return inner
-
-def Sub_Cb_Paste_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		try:
-			text = Win0.selection_(selection = "CLIPBOARD").rstrip()
-			obj.insert("insert", text)
-		except:
-			pass
-	return inner
-
-def Sub_M1_Btn1(e = None):
-	TmBgn = time.time()
-	obj1 = M2_St1
-	obj2 = M1_Cb1
-	s1 = obj1.get("1.0", "end-1c").strip()
-	s2 = obj2.get().strip()
-	a1 = []
-	if len(s1) > 0:
-		for _opt in s1.split("\n"):
-			_opt = _opt.strip()
-			if len(_opt) > 0:
-				a1 += [(s2 + " " + _opt)]
-	else:
-		a1 += [s2]
-	Sub_Clear()
-	Cnt = 0
-	List_PS = []
-	# PS実行リスト作成
-	for _s1 in a1:
-		print(H1_BGN + _s1 + H1_END)
-		try:
-			_ps = subprocess.Popen(_s1, shell = True)
-			List_PS.append(_ps)
-			# 同期処理
-			if Var_Chkbox1.get() == 1:
-				# PS監視
-				dWait = 0.016 * 5
-				while _ps.poll() is None:
-					time.sleep(dWait)
-					dWait *= 2
-			Cnt += 1
-		except:
-			break
-	i1 = Cnt
-	# PS監視
-	for _ps in List_PS:
-		dWait = 0.016 * 100
-		while _ps.poll() is None:
-			time.sleep(dWait)
-			dWait *= 2
-		i1 -= 1
-	# PS終了処理
-	TmEnd = time.time()
-	AddStr = "(END) " + str(Cnt) + " count"
-	if Cnt > 1:
-		AddStr += "s"
-	AddStr += " %.3f sec" % (TmEnd - TmBgn)
-	print(H1_BGN + AddStr + H1_END)
-
-def Sub_M2_St1_ContextMenu(e):
-	obj1 = M2_St1
-	obj2 = None
-	if obj1.tag_ranges("sel"):
-		obj2 = M2_ContextMenu_Select
-	else:
-		obj2 = M2_ContextMenu_All
-	obj2.post(e.x_root, e.y_root)
-
-def Sub_St_Clear_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.delete("sel.first", "sel.last")
-	return inner
-
-def Sub_St_Clear_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.delete("1.0", "end")
-	return inner
-
-def Sub_St_Copy_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.get("sel.first", "sel.last"))
-	return inner
-
-def Sub_St_Copy_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.get("1.0", "end-1c"))
-	return inner
-
-def Sub_St_Cut_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.get("sel.first", "sel.last"))
-		obj.delete("sel.first", "sel.last")
-	return inner
-
-def Sub_St_Cut_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		obj.clipboard_clear()
-		obj.clipboard_append(obj.get("1.0", "end-1c"))
-		obj.delete("1.0", "end")
-	return inner
-
-def Sub_St_Paste_Select(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		try:
-			text = Win0.selection_get(selection = "CLIPBOARD").rstrip()
-			obj.delete("sel.first", "sel.last")
-			obj.insert("insert", text + "\n")
-			obj.see("insert")
-		except:
-			pass
-	return inner
-
-def Sub_St_Paste_All(obj = None, e = None):
-	if obj == None:
-		return
-	def inner():
-		try:
-			text = Win0.selection_get(selection = "CLIPBOARD").rstrip()
-			obj.insert("insert", text + "\n")
-			obj.see("insert")
-		except:
-			pass
-	return inner
+	# 前処理
+	_Terminal.Clear()
+	_Terminal.YtDlp_Update()
+	C21.focus_force()
 
 #-------------------------------------------------------------------------------
-# Window [0]
+# 引数からファイル読込
 #-------------------------------------------------------------------------------
-Win0 = Tk.Tk()
-
-# Window 初期サイズ
-min = {
-	"W": 480,
-	"H": 200
-}
-# Window 初期ポジション
-pos = {
-	"X": int((Win0.winfo_screenwidth() - min["W"]) / 2),
-	"Y": int((Win0.winfo_screenheight() - min["H"]) / 2)
-}
-Win0.bind("<Configure>", Sub_Win0_Resize)
-Win0.configure(bg = "#555")
-Win0.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
-Win0.minsize(width = min["W"], height = min["H"])
-Win0.resizable(width = True, height = True)
-Win0.title(PROGRAM + " " + VERSION)
-# 使用不可：Windows,Linux互換問題
-#   Win0.attributes()
-
-#-------------------------------------------------------------------------------
-# M1 = Command & Option
-#-------------------------------------------------------------------------------
-M1_Lbl1 = Tk.Label(
-	text = "YT-DLP コマンド",
-	font = ("Helvetica", 10, "bold"),
-	fg = "white",
-	bg = "#555"
-)
-
-a1 = List_Command.strip().split("\n")
-M1_Cb1 = Tk_Ttk.Combobox(
-	Win0,
-	font = ("Courier", 10), values = (a1)
-)
-obj1 = M1_Cb1
-obj1.bind("<Button-3>", Sub_M1_Cb1_ContextMenu)
-obj1.insert("end", a1[0])
-a1 = []
-
-# 範囲指定あり
-M1_ContextMenu_Select = Tk.Menu(
-	Win0,
-	tearoff = 0,
-	font = ("Helvetica", 10)
-)
-obj1 = M1_ContextMenu_Select
-obj1.add_command(label = "クリア", command = Sub_Cb_Clear_Select(obj = M1_Cb1))
-obj1.add_separator()
-obj1.add_command(label = "コピー", command = Sub_Cb_Copy_Select(obj = M1_Cb1))
-obj1.add_command(label = "カット", command = Sub_Cb_Cut_Select(obj = M1_Cb1))
-obj1.add_command(label = "ペースト", command = Sub_Cb_Paste_Select(obj = M1_Cb1))
-
-# 範囲指定なし
-M1_ContextMenu_All = Tk.Menu(
-	Win0,
-	tearoff = 0,
-	font = ("Helvetica", 10)
-)
-obj1 = M1_ContextMenu_All
-obj1.add_command(label = "全クリア", command = Sub_Cb_Clear_All(obj = M1_Cb1))
-obj1.add_separator()
-obj1.add_command(label = "全コピー", command = Sub_Cb_Copy_All(obj = M1_Cb1))
-obj1.add_command(label = "全カット", command = Sub_Cb_Cut_All(obj = M1_Cb1))
-obj1.add_command(label = "ペースト", command = Sub_Cb_Paste_All(obj = M1_Cb1))
-
-M1_Btn1 = Tk.Button(
-	Win0,
-	text = "実行",
-	font = ("Helvetica", 10),
-	fg = "#fff",
-	bg = "crimson",
-	relief = "flat",
-	cursor = "hand2",
-	command = Sub_M1_Btn1
-)
-
-Var_Chkbox1 = Tk.IntVar()
-M1_Chkbox1 = Tk.Checkbutton(
-	Win0,
-	text = "同期処理",
-	font = ("Helvetica", 10),
-	fg = "#fff",
-	bg = "#555",
-	cursor = "hand2",
-	selectcolor = "#111",
-	variable = Var_Chkbox1
-)
-
-#-------------------------------------------------------------------------------
-# M2 = Argument
-#-------------------------------------------------------------------------------
-M2_Lbl1 = Tk.Label(
-	text = "YouTube URL（改行区切り）",
-	font = ("Helvetica", 10, "bold"),
-	fg = "white",
-	bg = "#555"
-)
-
-M2_St1 = Tk_St.ScrolledText(
-	Win0,
-	font = ("Courier", 11),
-	relief = "flat",
-	borderwidth = 0,
-	undo = "true",
-	insertofftime = 0
-)
-obj1 = M2_St1
-obj1.bind("<Button-3>", Sub_M2_St1_ContextMenu)
-obj1.configure(state = "normal")
-
-# 範囲指定あり
-M2_ContextMenu_Select = Tk.Menu(
-	Win0,
-	font = ("Helvetica", 10),
-	tearoff = 0
-)
-obj1 = M2_ContextMenu_Select
-obj1.add_command(label = "クリア", command = Sub_St_Clear_Select(obj = M2_St1))
-obj1.add_separator()
-obj1.add_command(label = "コピー", command = Sub_St_Copy_Select(obj = M2_St1))
-obj1.add_command(label = "カット", command = Sub_St_Cut_Select(obj = M2_St1))
-obj1.add_command(label = "ペースト", command = Sub_St_Paste_Select(obj = M2_St1))
-
-# 範囲指定なし
-M2_ContextMenu_All = Tk.Menu(
-	Win0,
-	font = ("Helvetica", 10),
-	tearoff = 0
-)
-obj1 = M2_ContextMenu_All
-obj1.add_command(label = "全クリア", command = Sub_St_Clear_All(obj = M2_St1))
-obj1.add_separator()
-obj1.add_command(label = "全コピー", command = Sub_St_Copy_All(obj = M2_St1))
-obj1.add_command(label = "全カット", command = Sub_St_Cut_All(obj = M2_St1))
-obj1.add_command(label = "ペースト", command = Sub_St_Paste_All(obj = M2_St1))
-
-M2_Clear_Btn1 = Tk.Button(
-	Win0,
-	text = "クリア",
-	font = ("Helvetica", 9),
-	fg = "white",
-	bg = "navy",
-	relief = "flat",
-	cursor = "hand2",
-	command = Sub_St_Clear_All(obj = M2_St1)
-)
-M2_Paste_Btn1 = Tk.Button(
-	Win0,
-	text = "ペースト",
-	font = ("Helvetica", 9),
-	fg = "white",
-	bg = "mediumblue",
-	relief = "flat",
-	cursor = "hand2",
-	command = Sub_St_Paste_All(obj = M2_St1)
-)
+AryC41 = []
+for _s1 in sys.argv:
+	AryC41.append(_s1.strip())
+del AryC41[0]
+for _s1 in AryC41:
+	try:
+		with open(_s1) as iFs:
+			C41.insert("insert", iFs.read().rstrip() + "\n")
+	except:
+		pass
+C41.see("insert")
 
 #-------------------------------------------------------------------------------
 # Main
 #-------------------------------------------------------------------------------
-M1_Lbl1.place(x = 5, y = 3)
-M1_Cb1.place(x = 5, y = 23, height = 20)
-M1_Btn1.place(y = 23, width = 62, height = 20)
-M1_Chkbox1.place(y = 23, width = 75, height = 20)
-
-M2_Lbl1.place(x = 5, y = 53)
-M2_St1.place(x = 5, y = 73)
-M2_Clear_Btn1.place(y = 53, width = 65, height = 20)
-M2_Paste_Btn1.place(y = 53, width = 80, height = 20)
-
-# 前処理
-Sub_Terminal_Reposition()
-Sub_Clear()
-Sub_YtDlp_Update()
-M1_Cb1.focus_force()
-
-Win0.mainloop()
-Win0.quit()
+W0.mainloop()
+W0.quit()
