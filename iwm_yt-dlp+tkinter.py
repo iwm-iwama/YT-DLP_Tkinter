@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20240626"
+VERSION = "Ver.iwm20240627"
 
 import shutil
 import subprocess
@@ -29,10 +29,8 @@ wget -rH -nc
 """
 
 #-------------------------------------------------------------------------------
-# Window[0]
+# W0 = Window[0]
 #-------------------------------------------------------------------------------
-W0 = Tk.Tk()
-
 class _Terminal:
 	def Help():
 		print(
@@ -78,28 +76,20 @@ class _Terminal:
 		subprocess.run("clear || cls", shell = True)
 
 	def YtDlp_Update():
+		_Terminal.Clear()
 		Cmd = "yt-dlp"
 		if shutil.which(Cmd):
-			# ダイアログは最前面に "固定表示されない" 仕様のようなので注意!!!!
-			select = messagebox.askyesno(PROGRAM, "YT-DLP の更新を確認しますか ?")
-			if select == True:
+			rtn = messagebox.askyesno(PROGRAM, "YT-DLP の更新を確認しますか ?")
+			if rtn == True:
 				print(
-					"\033[97;44m " +
-					Cmd +
-					" \033[0m" +
-					"\n" +
-					"\033[5G" +
 					"\033[38;2;255;192;0m" +
 					subprocess.run(
 						(Cmd + " --update-to nightly"),
 						shell = True,
 						capture_output = True,
 						text = True
-					).stdout.strip().replace("\n", "\n    ") +
-					"\n" +
-					"\033[97;44m " +
-					"(END)" +
-					" \033[0m"
+					).stdout.strip() +
+					"\033[0m"
 				)
 			print()
 			_Terminal.Help()
@@ -118,6 +108,19 @@ class _Terminal:
 				"Recommended（推奨版）" +
 				"\033[0m"
 			)
+
+class _W0:
+	#--------
+	# 前処理
+	#--------
+	# ダイアログは最前面に "固定表示されない" ので別途表示
+	_Terminal.YtDlp_Update()
+
+	#-----
+	# W0
+	#-----
+	global W0
+	W0 = Tk.Tk()
 
 class _C11:
 	global C11
@@ -444,7 +447,7 @@ class _C33:
 	)
 	C33.place(y = 53, width = 75, height = 20)
 
-class _W0:
+class _W0_Main:
 	def Resize(e):
 		if e.widget is W0:
 			C21.place(width = e.width - 155)
@@ -470,11 +473,13 @@ class _W0:
 	W0.minsize(width = min["W"], height = min["H"])
 	W0.resizable(width = True, height = True)
 	W0.title(PROGRAM + " " + VERSION)
-	# 使用不可：Windows,Linux互換問題
+	# 使用不可：Windows, Linux 互換問題
 	#   W0.attributes()
 
+	#-------------
 	# 表示位置変更
-	#   Windows以外で例外発生
+	#-------------
+	# Windows以外で例外発生
 	try:
 		hwnd = windll.user32.GetForegroundWindow()
 		windll.user32.MoveWindow(
@@ -488,28 +493,29 @@ class _W0:
 	except(NameError, SyntaxError):
 		pass
 
-	# 前処理
-	_Terminal.Clear()
-	_Terminal.YtDlp_Update()
+	#---------------------------
+	# 引数のファイル名からリスト読込
+	#---------------------------
+	AryC41 = []
+	for _s1 in sys.argv:
+		AryC41.append(_s1.strip())
+	del AryC41[0]
+	for _s1 in AryC41:
+		try:
+			with open(_s1) as iFs:
+				C41.insert("insert", iFs.read().rstrip() + "\n")
+		except:
+			pass
+	C41.see("insert")
+
+	#-----------
+	# フォーカス
+	#-----------
 	C21.focus_force()
 
-#-------------------------------------------------------------------------------
-# 引数からファイル読込
-#-------------------------------------------------------------------------------
-AryC41 = []
-for _s1 in sys.argv:
-	AryC41.append(_s1.strip())
-del AryC41[0]
-for _s1 in AryC41:
-	try:
-		with open(_s1) as iFs:
-			C41.insert("insert", iFs.read().rstrip() + "\n")
-	except:
-		pass
-C41.see("insert")
+	#-------
+	# Main
+	#-------
+	W0.mainloop()
+	W0.quit()
 
-#-------------------------------------------------------------------------------
-# Main
-#-------------------------------------------------------------------------------
-W0.mainloop()
-W0.quit()
