@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20240627"
+VERSION = "Ver.iwm20240712"
 
 import shutil
 import subprocess
@@ -33,42 +33,49 @@ wget -rH -nc
 #-------------------------------------------------------------------------------
 class _Terminal:
 	def Help():
+		BG = " " * 60
 		print(
-			"\033[97;44m " +
+			"\033[97;44m" +
+			BG +
+			"\033[2G" +
 			"簡易ヘルプ" +
-			" \033[0m" +
+			"\033[0m" +
 			"\n" +
-			"\033[5G" +
+			"\033[2G" +
 			"\033[93m" +
 			"YT-DLP コマンド／オプション" +
 			"\n" +
-			"\033[9G" +
+			"\033[6G" +
 			"\033[96m" +
 			"yt-dlp -f b" +
 			"\n" +
-			"\033[14G" +
+			"\033[10G" +
 			"\033[97m" +
 			"動画ファイルを最高画質でダウンロード" +
 			"\n" +
-			"\033[9G" +
+			"\033[6G" +
 			"\033[96m" +
 			"yt-dlp -x --audio-format mp3" +
 			"\n" +
-			"\033[14G" +
+			"\033[10G" +
 			"\033[97m" +
 			"音声ファイルをMC3でダウンロード" +
 			"\n" +
-			"\033[9G" +
+			"\033[6G" +
 			"\033[96m" +
 			"yt-dlp --help" +
 			"\n" +
-			"\033[14G" +
+			"\033[10G" +
 			"\033[97m" +
 			"オプション・ヘルプ" +
 			"\n" +
-			"\033[97;44m " +
-			"(END)" +
-			" \033[0m"
+			"\n" +
+			"\033[97;44m" +
+			BG +
+			"\033[2G" +
+			"END" +
+			"\033[0m" +
+			"\n"
 		)
 
 	def Clear():
@@ -234,39 +241,39 @@ class _C22:
 			for _opt in s1.split("\n"):
 				_opt = _opt.strip()
 				if len(_opt) > 0:
-					a1 += [(s2 + " " + _opt)]
+					# エラーになる文字を変換
+					a1 += [(s2 + " " + _opt.replace("&", "%26"))]
 		else:
 			a1 += [s2]
-		Cnt = 0
 		List_PS = []
-		# PSExecリスト作成
+		Cnt = 0
 		for _s1 in a1:
-			print(f"\033[94m$ {_s1} \033[0m")
+			Cnt += 1
+			print(f"\033[97;44m({Cnt}) {_s1} \033[0m")
 			try:
-				_ps = subprocess.Popen(_s1, shell = True)
-				List_PS.append(_ps)
-				# 同期処理
+				# Linux対応
+				# NG: _ps = subprocess.Popen(_s1, shell=False)
+				_ps = subprocess.Popen(_s1.split(), shell=False)
+				# 同期／非同期
 				if C23_Var.get() == 1:
-					# PS監視
-					while _ps.poll() is None:
-						time.sleep(0.016 * 10)
-				Cnt += 1
+					# 終了待ち
+					_ps.wait()
+				else:
+					# PSリスト作成
+					List_PS.append(_ps)
 			except:
-				pass
-		i1 = Cnt
-		# PS監視
+				print(
+					"\033[91m" +
+					"[Err] コマンドを間違っていませんか？"
+				)
+		# 終了処理
 		for _ps in List_PS:
-			while _ps.poll() is None:
-				time.sleep(0.016 * 50)
-			i1 -= 1
-		# PS終了処理
+			_ps.wait()
 		TmEnd = time.time()
-		s1 = "(END) " + str(Cnt) + " count"
-		s2 = ""
-		if Cnt > 1:
-			s2 = "s"
-		s3 = " (%.3f sec)" % (TmEnd - TmBgn)
-		print(f"\033[97;44m$ {s1}{s2}{s3} \033[0m")
+		s1 = "counts" if Cnt > 1 else "count"
+		s2 = "(%.3f sec)" % (TmEnd - TmBgn)
+		print(f"\033[97;44m(END) {Cnt} {s1} {s2} \033[0m")
+		print()
 
 	global C22
 	C22 = Tk.Button(
@@ -476,9 +483,9 @@ class _W0_Main:
 	# 使用不可：Windows, Linux 互換問題
 	#   W0.attributes()
 
-	#-------------
+	#---------------
 	# 表示位置変更
-	#-------------
+	#---------------
 	# Windows以外で例外発生
 	try:
 		hwnd = windll.user32.GetForegroundWindow()
@@ -493,9 +500,9 @@ class _W0_Main:
 	except(NameError, SyntaxError):
 		pass
 
-	#---------------------------
+	#---------------------------------
 	# 引数のファイル名からリスト読込
-	#---------------------------
+	#---------------------------------
 	AryC41 = []
 	for _s1 in sys.argv:
 		AryC41.append(_s1.strip())
@@ -508,9 +515,9 @@ class _W0_Main:
 			pass
 	C41.see("insert")
 
-	#-----------
+	#-------------
 	# フォーカス
-	#-----------
+	#-------------
 	C21.focus_force()
 
 	#-------
