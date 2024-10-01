@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20240712"
+VERSION = "Ver.iwm20241001"
 
 import shutil
 import subprocess
@@ -21,7 +21,7 @@ from tkinter import messagebox
 #-------------------------------------------------------------------------------
 # YT-DLP Command & Option
 LIST_COMMAND = """
-yt-dlp -f b
+yt-dlp -f bestvideo*+bestaudio/best
 yt-dlp -x --audio-format mp3
 yt-dlp --help
 echo
@@ -117,9 +117,9 @@ class _Terminal:
 			)
 
 class _W0:
-	#--------
+	#---------
 	# 前処理
-	#--------
+	#---------
 	# ダイアログは最前面に "固定表示されない" ので別途表示
 	_Terminal.YtDlp_Update()
 
