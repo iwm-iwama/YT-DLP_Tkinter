@@ -47,7 +47,7 @@ class _Terminal:
 			"\n" +
 			"\033[6G" +
 			"\033[96m" +
-			"yt-dlp -f b" +
+			"yt-dlp -f bestvideo*+bestaudio/best" +
 			"\n" +
 			"\033[10G" +
 			"\033[97m" +
