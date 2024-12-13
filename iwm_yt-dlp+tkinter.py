@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20241001"
+VERSION = "Ver.iwm20241213"
 
 import shutil
 import subprocess
@@ -41,31 +41,35 @@ class _Terminal:
 			"簡易ヘルプ" +
 			"\033[0m" +
 			"\n" +
+			"\n" +
 			"\033[2G" +
 			"\033[93m" +
 			"YT-DLP コマンド／オプション" +
 			"\n" +
-			"\033[6G" +
+			"\n" +
+			"\033[4G" +
 			"\033[96m" +
 			"yt-dlp -f bestvideo*+bestaudio/best" +
 			"\n" +
-			"\033[10G" +
+			"\033[6G" +
 			"\033[97m" +
 			"動画ファイルを最高画質でダウンロード" +
 			"\n" +
-			"\033[6G" +
+			"\n" +
+			"\033[4G" +
 			"\033[96m" +
 			"yt-dlp -x --audio-format mp3" +
 			"\n" +
-			"\033[10G" +
+			"\033[6G" +
 			"\033[97m" +
 			"音声ファイルをMC3でダウンロード" +
 			"\n" +
-			"\033[6G" +
+			"\n" +
+			"\033[4G" +
 			"\033[96m" +
 			"yt-dlp --help" +
 			"\n" +
-			"\033[10G" +
+			"\033[6G" +
 			"\033[97m" +
 			"オプション・ヘルプ" +
 			"\n" +
@@ -133,7 +137,7 @@ class _C11:
 	global C11
 	C11 = Tk.Label(
 		text = "YT-DLP コマンド",
-		font = ("Helvetica", 9, "bold"),
+		font = ("TkFixedFont", 9, "bold"),
 		fg = "white",
 		bg = "#555"
 	)
@@ -194,7 +198,7 @@ class _C21:
 			pass
 
 	def ButtonRelease_1(e):
-		obj1 = Tk.Menu(W0, tearoff = 0, font = ("Helvetica", 10))
+		obj1 = Tk.Menu(W0, tearoff = 0, font = ("TkFixedFont", 10))
 		if C21.selection_present():
 			obj1.add_command(label = "クリア", command = _C21.Clear(obj = C21, select_all = False))
 			obj1.add_separator()
@@ -206,7 +210,7 @@ class _C21:
 		C21_ContextMenu = obj1
 
 	def Button_3(e):
-		obj1 = Tk.Menu(W0, tearoff = 0, font = ("Helvetica", 10))
+		obj1 = Tk.Menu(W0, tearoff = 0, font = ("TkFixedFont", 10))
 		obj1.add_command(label = "全クリア", command = _C21.Clear(obj = C21, select_all = True))
 		obj1.add_separator()
 		obj1.add_command(label = "全コピー", command = _C21.Copy(obj = C21, select_all = True))
@@ -221,7 +225,7 @@ class _C21:
 	global C21
 	C21 = Tk_Ttk.Combobox(
 		W0,
-		font = ("Courier", 12),
+		font = ("TkFixedFont", 11),
 		values = (a1)
 	)
 	C21.place(x = 5, y = 23, height = 20)
@@ -272,16 +276,17 @@ class _C22:
 		TmEnd = time.time()
 		s1 = "counts" if Cnt > 1 else "count"
 		s2 = "(%.3f sec)" % (TmEnd - TmBgn)
-		print(f"\033[97;44m(END) {Cnt} {s1} {s2} \033[0m")
+		print(f"\n\033[97;44m(END) {Cnt} {s1} {s2} \033[0m")
 		print()
 
 	global C22
 	C22 = Tk.Button(
 		W0,
 		text = "実行",
-		font = ("Helvetica", 10),
+		font = ("TkFixedFont", 9),
 		fg = "#fff",
 		bg = "crimson",
+		highlightthickness = 0,
 		relief = "flat",
 		cursor = "hand2",
 		command = Click
@@ -294,9 +299,10 @@ class _C23:
 	C23 = Tk.Checkbutton(
 		W0,
 		text = "同期処理",
-		font = ("Helvetica", 10),
+		font = ("TkFixedFont", 9),
 		fg = "#fff",
 		bg = "#555",
+		highlightthickness = 0,
 		cursor = "hand2",
 		selectcolor = "#111",
 		variable = C23_Var
@@ -379,7 +385,7 @@ class _C41:
 			pass
 
 	def ButtonRelease_1(e):
-		obj1 = Tk.Menu(W0, font = ("Helvetica", 10), tearoff = 0)
+		obj1 = Tk.Menu(W0, font = ("TkFixedFont", 10), tearoff = 0)
 		if C41.tag_ranges("sel"):
 			obj1.add_command(label = "クリア", command = _C41.Clear(obj = C41, select_all = False))
 			obj1.add_separator()
@@ -391,7 +397,7 @@ class _C41:
 		C41_ContextMenu = obj1
 
 	def Button_3(e):
-		obj1 = Tk.Menu(W0, font = ("Helvetica", 10), tearoff = 0)
+		obj1 = Tk.Menu(W0, font = ("TkFixedFont", 10), tearoff = 0)
 		obj1.add_command(label = "全クリア", command = _C41.Clear(obj = C41, select_all = True))
 		obj1.add_separator()
 		obj1.add_command(label = "全コピー", command = _C41.Copy(obj = C41, select_all = True))
@@ -420,7 +426,7 @@ class _C31:
 	global C31
 	C31 = Tk.Label(
 		text = "YouTube URL（改行区切り）",
-		font = ("Helvetica", 9, "bold"),
+		font = ("TkFixedFont", 9, "bold"),
 		fg = "white",
 		bg = "#555"
 	)
@@ -431,9 +437,10 @@ class _C32:
 	C32 = Tk.Button(
 		W0,
 		text = "クリア",
-		font = ("Helvetica", 10),
+		font = ("TkFixedFont", 9),
 		fg = "white",
 		bg = "navy",
+		highlightthickness = 0,
 		relief = "flat",
 		cursor = "hand2",
 		command = _C41.Clear(obj = C41, select_all = True)
@@ -445,9 +452,10 @@ class _C33:
 	C33 = Tk.Button(
 		W0,
 		text = "ペースト",
-		font = ("Helvetica", 10),
+		font = ("TkFixedFont", 9),
 		fg = "white",
 		bg = "mediumblue",
+		highlightthickness = 0,
 		relief = "flat",
 		cursor = "hand2",
 		command = _C41.Add(obj = C41)
@@ -458,16 +466,16 @@ class _W0_Main:
 	def Resize(e):
 		if e.widget is W0:
 			C21.place(width = e.width - 155)
-			C22.place(x = e.width - 150)
+			C22.place(x = e.width - 149)
 			C23.place(x = e.width - 83)
-			C32.place(x = e.width - 150)
-			C33.place(x = e.width - 80)
+			C32.place(x = e.width - 149)
+			C33.place(x = e.width - 79)
 			C41.place(width = e.width - 10, height = e.height - 79)
 
 	# Window 初期サイズ
 	min = {
 		"W": 480,
-		"H": 200
+		"H": 240
 	}
 	# Window 初期ポジション
 	pos = {
