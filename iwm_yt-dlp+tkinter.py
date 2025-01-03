@@ -2,8 +2,9 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20241213"
+VERSION = "Ver.iwm20250102"
 
+import os
 import shutil
 import subprocess
 import sys
@@ -245,6 +246,11 @@ class _C22:
 			for _opt in s1.split("\n"):
 				_opt = _opt.strip()
 				if len(_opt) > 0:
+					# DLファイル名の文字数制限
+					#   (例) "あ" = １文字／3byte
+					#     255 / 3 ≒ 85 > 80
+					#     80 - DLフォルダ長
+					_opt += f" --trim-filenames {(80 - len(os.getcwd()))}"
 					# エラーになる文字を変換
 					a1 += [(s2 + " " + _opt.replace("&", "%26"))]
 		else:
