@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20250102"
+VERSION = "Ver.iwm20250220"
 
 import os
 import shutil
@@ -48,29 +48,29 @@ class _Terminal:
 			"YT-DLP コマンド／オプション" +
 			"\n" +
 			"\n" +
-			"\033[4G" +
+			"\033[5G" +
 			"\033[96m" +
 			"yt-dlp -f bestvideo*+bestaudio/best" +
 			"\n" +
-			"\033[6G" +
+			"\033[9G" +
 			"\033[97m" +
 			"動画ファイルを最高画質でダウンロード" +
 			"\n" +
 			"\n" +
-			"\033[4G" +
+			"\033[5G" +
 			"\033[96m" +
 			"yt-dlp -x --audio-format mp3" +
 			"\n" +
-			"\033[6G" +
+			"\033[9G" +
 			"\033[97m" +
 			"音声ファイルをMC3でダウンロード" +
 			"\n" +
 			"\n" +
-			"\033[4G" +
+			"\033[5G" +
 			"\033[96m" +
 			"yt-dlp --help" +
 			"\n" +
-			"\033[6G" +
+			"\033[9G" +
 			"\033[97m" +
 			"オプション・ヘルプ" +
 			"\n" +
@@ -494,8 +494,7 @@ class _W0_Main:
 	W0.minsize(width = min["W"], height = min["H"])
 	W0.resizable(width = True, height = True)
 	W0.title(PROGRAM + " " + VERSION)
-	# 使用不可：Windows, Linux 互換問題
-	#   W0.attributes()
+	W0.attributes("-topmost", True)
 
 	#---------------
 	# 表示位置変更
