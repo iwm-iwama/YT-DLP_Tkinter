@@ -421,7 +421,7 @@ class _C41:
 	global C41
 	C41 = Tk_St.ScrolledText(
 		W0,
-		font = ("Courier", 12),
+		font = (FontType, 11),
 		relief = "flat",
 		borderwidth = 0,
 		undo = "true",
