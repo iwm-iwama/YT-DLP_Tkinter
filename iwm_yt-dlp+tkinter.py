@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20250220"
+VERSION = "Ver.iwm20250414"
 
 import os
 import shutil
@@ -28,6 +28,11 @@ yt-dlp --help
 echo
 wget -rH -nc
 """
+
+# Base
+FontType  = "TkFixedFont"
+FontColor = "#fff"
+BackColor = "#363636"
 
 #-------------------------------------------------------------------------------
 # W0 = Window[0]
@@ -138,9 +143,9 @@ class _C11:
 	global C11
 	C11 = Tk.Label(
 		text = "YT-DLP コマンド",
-		font = ("TkFixedFont", 9, "bold"),
-		fg = "white",
-		bg = "#555"
+		font = (FontType, 9, "bold"),
+		fg = FontColor,
+		bg = BackColor
 	)
 	C11.place(x = 5, y = 4)
 
@@ -199,7 +204,7 @@ class _C21:
 			pass
 
 	def ButtonRelease_1(e):
-		obj1 = Tk.Menu(W0, tearoff = 0, font = ("TkFixedFont", 10))
+		obj1 = Tk.Menu(W0, tearoff = 0, font = (FontType, 10))
 		if C21.selection_present():
 			obj1.add_command(label = "クリア", command = _C21.Clear(obj = C21, select_all = False))
 			obj1.add_separator()
@@ -211,7 +216,7 @@ class _C21:
 		C21_ContextMenu = obj1
 
 	def Button_3(e):
-		obj1 = Tk.Menu(W0, tearoff = 0, font = ("TkFixedFont", 10))
+		obj1 = Tk.Menu(W0, tearoff = 0, font = (FontType, 10))
 		obj1.add_command(label = "全クリア", command = _C21.Clear(obj = C21, select_all = True))
 		obj1.add_separator()
 		obj1.add_command(label = "全コピー", command = _C21.Copy(obj = C21, select_all = True))
@@ -226,7 +231,7 @@ class _C21:
 	global C21
 	C21 = Tk_Ttk.Combobox(
 		W0,
-		font = ("TkFixedFont", 11),
+		font = (FontType, 11),
 		values = (a1)
 	)
 	C21.place(x = 5, y = 23, height = 20)
@@ -289,8 +294,8 @@ class _C22:
 	C22 = Tk.Button(
 		W0,
 		text = "実行",
-		font = ("TkFixedFont", 9),
-		fg = "#fff",
+		font = (FontType, 9),
+		fg = FontColor,
 		bg = "crimson",
 		highlightthickness = 0,
 		relief = "flat",
@@ -305,9 +310,9 @@ class _C23:
 	C23 = Tk.Checkbutton(
 		W0,
 		text = "同期処理",
-		font = ("TkFixedFont", 9),
-		fg = "#fff",
-		bg = "#555",
+		font = (FontType, 9),
+		fg = FontColor,
+		bg = BackColor,
 		highlightthickness = 0,
 		cursor = "hand2",
 		selectcolor = "#111",
@@ -391,7 +396,7 @@ class _C41:
 			pass
 
 	def ButtonRelease_1(e):
-		obj1 = Tk.Menu(W0, font = ("TkFixedFont", 10), tearoff = 0)
+		obj1 = Tk.Menu(W0, font = (FontType, 10), tearoff = 0)
 		if C41.tag_ranges("sel"):
 			obj1.add_command(label = "クリア", command = _C41.Clear(obj = C41, select_all = False))
 			obj1.add_separator()
@@ -403,7 +408,7 @@ class _C41:
 		C41_ContextMenu = obj1
 
 	def Button_3(e):
-		obj1 = Tk.Menu(W0, font = ("TkFixedFont", 10), tearoff = 0)
+		obj1 = Tk.Menu(W0, font = (FontType, 10), tearoff = 0)
 		obj1.add_command(label = "全クリア", command = _C41.Clear(obj = C41, select_all = True))
 		obj1.add_separator()
 		obj1.add_command(label = "全コピー", command = _C41.Copy(obj = C41, select_all = True))
@@ -432,9 +437,9 @@ class _C31:
 	global C31
 	C31 = Tk.Label(
 		text = "YouTube URL（改行区切り）",
-		font = ("TkFixedFont", 9, "bold"),
-		fg = "white",
-		bg = "#555"
+		font = (FontType, 9, "bold"),
+		fg = FontColor,
+		bg = BackColor
 	)
 	C31.place(x = 5, y = 52)
 
@@ -443,8 +448,8 @@ class _C32:
 	C32 = Tk.Button(
 		W0,
 		text = "クリア",
-		font = ("TkFixedFont", 9),
-		fg = "white",
+		font = (FontType, 9),
+		fg = FontColor,
 		bg = "navy",
 		highlightthickness = 0,
 		relief = "flat",
@@ -458,8 +463,8 @@ class _C33:
 	C33 = Tk.Button(
 		W0,
 		text = "ペースト",
-		font = ("TkFixedFont", 9),
-		fg = "white",
+		font = (FontType, 9),
+		fg = FontColor,
 		bg = "mediumblue",
 		highlightthickness = 0,
 		relief = "flat",
@@ -489,7 +494,7 @@ class _W0_Main:
 		"Y": int((W0.winfo_screenheight() - min["H"]) / 2)
 	}
 	W0.bind("<Configure>", Resize)
-	W0.configure(bg = "#555")
+	W0.configure(bg = BackColor)
 	W0.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
 	W0.minsize(width = min["W"], height = min["H"])
 	W0.resizable(width = True, height = True)
