@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20250414"
+VERSION = "Ver.iwm20250418"
 
 import os
 import shutil
@@ -248,16 +248,21 @@ class _C22:
 		s2 = C21.get().strip()
 		a1 = []
 		if len(s1) > 0:
+			# yt-dlp コマンドのときはオプション追記（後述）
+			iCmd = s2.upper().find("YT-DLP")
 			for _opt in s1.split("\n"):
 				_opt = _opt.strip()
 				if len(_opt) > 0:
-					# DLファイル名の文字数制限
+					# DLファイル名の文字数制限オプション追記
 					#   (例) "あ" = １文字／3byte
 					#     255 / 3 ≒ 85 > 80
 					#     80 - DLフォルダ長
-					_opt += f" --trim-filenames {(80 - len(os.getcwd()))}"
+					if iCmd >= 0:
+						s2 += f" --trim-filenames {(80 - len(os.getcwd()))}"
+					# 末尾に引数追記
+					s2 += f" {_opt}"
 					# エラーになる文字を変換
-					a1 += [(s2 + " " + _opt.replace("&", "%26"))]
+					a1 += [(s2.replace("&", "%26"))]
 		else:
 			a1 += [s2]
 		List_PS = []
