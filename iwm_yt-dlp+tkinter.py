@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20250418"
+VERSION = "Ver.iwm20250428"
 
 import os
 import shutil
@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 import tkinter as Tk
+import tkinter.filedialog as Tk_Fd
 import tkinter.scrolledtext as Tk_St
 import tkinter.ttk as Tk_Ttk
 
@@ -32,7 +33,7 @@ wget -rH -nc
 # Base
 FontType  = "TkFixedFont"
 FontColor = "#fff"
-BackColor = "#363636"
+BackColor = "#383838"
 
 #-------------------------------------------------------------------------------
 # W0 = Window[0]
@@ -97,11 +98,11 @@ class _Terminal:
 		Cmd = "yt-dlp"
 		if shutil.which(Cmd):
 			rtn = messagebox.askyesno(PROGRAM, "YT-DLP の更新を確認しますか ?")
-			if rtn == True:
+			if rtn:
 				print(
 					"\033[38;2;255;192;0m" +
 					subprocess.run(
-						(Cmd + " --update-to nightly"),
+						f"{Cmd} --update-to nightly",
 						shell = True,
 						capture_output = True,
 						text = True
@@ -154,7 +155,7 @@ class _C21:
 		if obj == None:
 			return
 		def inner():
-			if select_all == True:
+			if select_all:
 				obj.delete("0", "end")
 			else:
 				obj.delete("sel.first", "sel.last")
@@ -165,7 +166,7 @@ class _C21:
 			return
 		def inner():
 			obj.clipboard_clear()
-			if select_all == True:
+			if select_all:
 				obj.clipboard_append(obj.get())
 			else:
 				obj.clipboard_append(obj.selection_get())
@@ -176,7 +177,7 @@ class _C21:
 			return
 		def inner():
 			obj.clipboard_clear()
-			if select_all == True:
+			if select_all:
 				obj.clipboard_append(obj.get())
 				obj.delete("0", "end")
 			else:
@@ -189,9 +190,7 @@ class _C21:
 			return
 		def inner():
 			text = obj.selection_get(selection = "CLIPBOARD").rstrip()
-			if select_all == True:
-				pass
-			else:
+			if select_all == False:
 				obj.delete("sel.first", "sel.last")
 			obj.insert("insert", text)
 		return inner
@@ -244,50 +243,51 @@ class _C22:
 	def Click(e = None):
 		_Terminal.Clear()
 		TmBgn = time.time()
-		s1 = C41.get("1.0", "end-1c").strip()
-		s2 = C21.get().strip()
-		a1 = []
-		if len(s1) > 0:
+		sData = C41.get("1.0", "end-1c").strip()
+		sCmd = C21.get().strip()
+		aCmd = []
+		if sData:
 			# yt-dlp コマンドのときはオプション追記（後述）
-			iCmd = s2.upper().find("YT-DLP")
-			for _opt in s1.split("\n"):
-				_opt = _opt.strip()
-				if len(_opt) > 0:
+			iCmd = sCmd.upper().find("YT-DLP")
+			for _data in sData.split("\n"):
+				_data = _data.strip()
+				if _data:
 					# DLファイル名の文字数制限オプション追記
 					#   (例) "あ" = １文字／3byte
 					#     255 / 3 ≒ 85 > 80
 					#     80 - DLフォルダ長
+					_sCmd = sCmd
 					if iCmd >= 0:
-						s2 += f" --trim-filenames {(80 - len(os.getcwd()))}"
+						_sCmd += f" --trim-filenames {(80 - len(os.getcwd()))}"
 					# 末尾に引数追記
-					s2 += f" {_opt}"
+					_sCmd += f" {_data}"
 					# エラーになる文字を変換
-					a1 += [(s2.replace("&", "%26"))]
+					aCmd += [(_sCmd.replace("&", "%26"))]
 		else:
-			a1 += [s2]
-		List_PS = []
+			aCmd += [sCmd]
+		ListPS = []
 		Cnt = 0
-		for _s1 in a1:
+		for _s1 in aCmd:
 			Cnt += 1
 			print(f"\033[97;44m({Cnt}) {_s1} \033[0m")
 			try:
 				# Linux対応
-				# NG: _ps = subprocess.Popen(_s1, shell=False)
-				_ps = subprocess.Popen(_s1.split(), shell=False)
-				# 同期／非同期
-				if C23_Var.get() == 1:
+				# NG: _ps = subprocess.Popen(_s1, shell = False)
+				_ps = subprocess.Popen(_s1.split(), shell = False)
+				# 並行処理／単一処理
+				if C23_Var.get():
+					# PSリスト作成
+					ListPS.append(_ps)
+				else:
 					# 終了待ち
 					_ps.wait()
-				else:
-					# PSリスト作成
-					List_PS.append(_ps)
 			except:
 				print(
 					"\033[91m" +
 					"[Err] コマンドを間違っていませんか？"
 				)
 		# 終了処理
-		for _ps in List_PS:
+		for _ps in ListPS:
 			_ps.wait()
 		TmEnd = time.time()
 		s1 = "counts" if Cnt > 1 else "count"
@@ -312,9 +312,10 @@ class _C22:
 class _C23:
 	global C23, C23_Var
 	C23_Var = Tk.IntVar()
+	C23_Var.set(True)
 	C23 = Tk.Checkbutton(
 		W0,
-		text = "同期処理",
+		text = "並行処理",
 		font = (FontType, 9),
 		fg = FontColor,
 		bg = BackColor,
@@ -325,13 +326,51 @@ class _C23:
 	)
 	C23.place(y = 23, width = 75, height = 20)
 
-# C41 < C32, C32
+# C41 < C37, C38, C39
 class _C41:
+	def FileRead(obj = None, e = None):
+		if obj == None:
+			return
+		def inner():
+			filetype = [("All Files", "*")]
+			path = Tk_Fd.askopenfilename(initialdir = ".", filetypes = filetype)
+			if len(path) == 0 or os.path.isfile(path) == False:
+				return
+			with open(path, "rb") as iFp:
+				bin = iFp.read()
+			if not bin:
+				messagebox.showerror(PROGRAM, "空のファイル")
+				return
+			rtn = ""
+			# CP932 ?
+			try:
+				rtn = bin.decode("CP932")
+			except:
+				rtn = ""
+			# CP65001 ?
+			if not rtn:
+				try:
+					rtn = bin.decode("CP65001")
+					# BOM ?
+					if rtn[0] == "\ufeff":
+						rtn = rtn[1:len(rtn)]
+				except:
+					rtn = ""
+			# Binary ?
+			if not rtn:
+				messagebox.showerror(PROGRAM, "ファイル読込失敗")
+				return
+			# 改行を '\n' に統一
+			rtn = rtn.replace("\r\n", "\n").rstrip() + "\n"
+			obj.insert("insert", rtn)
+			obj.see("insert")
+		return inner
+
 	def Clear(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
 		def inner():
-			if select_all == True:
+			if select_all:
 				obj.delete("1.0", "end")
 			else:
 				obj.delete("sel.first", "sel.last")
@@ -342,7 +381,7 @@ class _C41:
 			return
 		def inner():
 			obj.clipboard_clear()
-			if select_all == True:
+			if select_all:
 				obj.clipboard_append(obj.get("1.0", "end-1c"))
 			else:
 				obj.clipboard_append(obj.get("sel.first", "sel.last"))
@@ -353,7 +392,7 @@ class _C41:
 			return
 		def inner():
 			obj.clipboard_clear()
-			if select_all == True:
+			if select_all:
 				obj.clipboard_append(obj.get("1.0", "end-1c"))
 				obj.delete("1.0", "end")
 			else:
@@ -366,9 +405,7 @@ class _C41:
 			return
 		def inner():
 			text = obj.selection_get(selection = "CLIPBOARD").rstrip()
-			if select_all == True:
-				pass
-			else:
+			if select_all == False:
 				obj.delete("sel.first", "sel.last")
 			obj.insert("insert", text)
 			obj.see("insert")
@@ -379,13 +416,13 @@ class _C41:
 			return
 		def inner():
 			s1 = obj.get("1.0", "end").strip()
-			if len(s1) > 0:
+			if s1:
 				s1 += "\n"
 			obj.delete("1.0", "end")
 			s2 = ""
 			try:
 				s2 = obj.selection_get(selection = "CLIPBOARD").strip()
-				if len(s2) > 0:
+				if s2:
 					s2 += "\n"
 			except:
 				pass
@@ -448,9 +485,24 @@ class _C31:
 	)
 	C31.place(x = 5, y = 52)
 
-class _C32:
-	global C32
-	C32 = Tk.Button(
+class _C37:
+	global C37
+	C37 = Tk.Button(
+		W0,
+		text = "ファイル",
+		font = (FontType, 9),
+		fg = FontColor,
+		bg = "purple",
+		highlightthickness = 0,
+		relief = "flat",
+		cursor = "hand2",
+		command = _C41.FileRead(obj = C41)
+	)
+	C37.place(y = 53, width = 70, height = 20)
+
+class _C38:
+	global C38
+	C38 = Tk.Button(
 		W0,
 		text = "クリア",
 		font = (FontType, 9),
@@ -461,11 +513,11 @@ class _C32:
 		cursor = "hand2",
 		command = _C41.Clear(obj = C41, select_all = True)
 	)
-	C32.place(y = 53, width = 70, height = 20)
+	C38.place(y = 53, width = 70, height = 20)
 
-class _C33:
-	global C33
-	C33 = Tk.Button(
+class _C39:
+	global C39
+	C39 = Tk.Button(
 		W0,
 		text = "ペースト",
 		font = (FontType, 9),
@@ -476,7 +528,7 @@ class _C33:
 		cursor = "hand2",
 		command = _C41.Add(obj = C41)
 	)
-	C33.place(y = 53, width = 75, height = 20)
+	C39.place(y = 53, width = 75, height = 20)
 
 class _W0_Main:
 	def Resize(e):
@@ -484,8 +536,9 @@ class _W0_Main:
 			C21.place(width = e.width - 155)
 			C22.place(x = e.width - 149)
 			C23.place(x = e.width - 83)
-			C32.place(x = e.width - 149)
-			C33.place(x = e.width - 79)
+			C37.place(x = e.width - 219)
+			C38.place(x = e.width - 149)
+			C39.place(x = e.width - 79)
 			C41.place(width = e.width - 10, height = e.height - 79)
 
 	# Window 初期サイズ
@@ -503,7 +556,7 @@ class _W0_Main:
 	W0.geometry(f'{min["W"]}x{min["H"]}+{pos["X"]}+{pos["Y"]}')
 	W0.minsize(width = min["W"], height = min["H"])
 	W0.resizable(width = True, height = True)
-	W0.title(PROGRAM + " " + VERSION)
+	W0.title(f"{PROGRAM} {VERSION}")
 	W0.attributes("-topmost", True)
 
 	#---------------
@@ -532,8 +585,8 @@ class _W0_Main:
 	del AryC41[0]
 	for _s1 in AryC41:
 		try:
-			with open(_s1) as iFs:
-				C41.insert("insert", iFs.read().rstrip() + "\n")
+			with open(_s1) as iFp:
+				C41.insert("insert", iFp.read().rstrip() + "\n")
 		except:
 			pass
 	C41.see("insert")
