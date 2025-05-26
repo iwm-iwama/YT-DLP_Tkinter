@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20250520"
+VERSION = "Ver.iwm20250526"
 
 import os
 import shutil
@@ -281,12 +281,12 @@ class _C22:
 					ListPS.append(_ps)
 					CntParallel += 1
 					if CntParallel >= GblPS:
+						CntParallel = 0
 						# 計測開始
 						SwBgn = time.perf_counter()
 						for _ps in ListPS:
 							_ps.wait()
 						ListPS = []
-						CntParallel = 0
 						# 計測終了
 						SwEnd = time.perf_counter()
 						# 計測時間が 1秒未満 なら並列処理数 +2
@@ -296,7 +296,7 @@ class _C22:
 						else:
 							if GblPS > 2:
 								GblPS -= 1
-						print(f"\033[95m[Concurrent Processes = {GblPS}]\033[0m")
+						print(f"\033[94m[Concurrent Processes = {GblPS}]\033[0m")
 				# 単一処理のとき
 				else:
 					_ps.wait()
@@ -309,8 +309,23 @@ class _C22:
 			_ps.wait()
 		TmEnd = time.time()
 		s1 = "counts" if Cnt > 1 else "count"
-		s2 = "(%.3f sec)" % (TmEnd - TmBgn)
-		print(f"\n\033[97;44m(END) {Cnt} {s1} {s2} \033[0m")
+		s2 = ""
+		# 経過時間
+		diffSec = TmEnd - TmBgn
+		if diffSec >= 60.0:
+			d1 = diffSec
+			iH = int(d1 / 3600)
+			d1 -= (iH * 3600)
+			iM = int(d1 / 60)
+			d1 -= (iM * 60)
+			iS = int(d1)
+			if diffSec >= 3600.0:
+				s2 = f"{iH:d}h {iM:d}m {iS:d}s"
+			elif diffSec >= 60.0:
+				s2 = f"{iM:d}m {iS:d}s"
+		else:
+			s2 = f"{diffSec:.2f}s"
+		print(f"\n\033[97;44m(END) {Cnt} {s1} / {s2} \033[0m")
 		print()
 
 	global C22
