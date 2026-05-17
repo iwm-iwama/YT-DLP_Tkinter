@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20250526"
+VERSION = "Ver.iwm20260517"
 
 import os
 import shutil
@@ -17,6 +17,12 @@ import tkinter.ttk as Tk_Ttk
 from ctypes import *
 from ctypes.wintypes import *
 from tkinter import messagebox
+
+# Windows用
+try:
+	import winreg
+except Exception:
+	pass
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -148,7 +154,7 @@ class _C11:
 		fg=FontColor,
 		bg=BackColor
 	)
-	C11.place(x=5, y=4)
+	C11.place(x=4, y=2)
 
 class _C21:
 	def Clear(obj = None, select_all = False, e = None):
@@ -233,7 +239,7 @@ class _C21:
 		font=(FontType, 11),
 		values=a1
 	)
-	C21.place(x=5, y=23, height=22)
+	C21.place(x=4, y=22, height=20)
 	C21.bind("<Button-1>", Button_1)
 	C21.bind("<ButtonRelease-1>", ButtonRelease_1)
 	C21.bind("<Button-3>", Button_3)
@@ -243,7 +249,7 @@ class _C22:
 	def Click(e = None):
 		_Terminal.Clear()
 		TmBgn = time.time()
-		sData = C41.get("1.0", "end-1c").strip()
+		sData = C51.get("1.0", "end-1c").strip()
 		sCmd = C21.get().strip()
 		aCmd = []
 		if sData:
@@ -338,9 +344,11 @@ class _C22:
 		highlightthickness=0,
 		relief="flat",
 		cursor="hand2",
+		activebackground="orange",
+		activeforeground="black",
 		command=Click
 	)
-	C22.place(y=24, width=60, height=20)
+	C22.place(y=22, width=60, height=20)
 
 class _C23:
 	global C23, C23_Var
@@ -354,13 +362,83 @@ class _C23:
 		bg=BackColor,
 		highlightthickness=0,
 		cursor="hand2",
-		selectcolor="#111",
+		activebackground="orange",
+		activeforeground="black",
+		selectcolor="black",
 		variable=C23_Var
 	)
-	C23.place(y=24, width=80, height=20)
+	C23.place(y=22, width=80, height=20)
 
-# C41 < C37, C38, C39
-class _C41:
+class _C31:
+	global C31
+	C31 = Tk.Label(
+		text="=>",
+		font=(FontType, 9, "bold"),
+		fg="gray60",
+		bg=BackColor
+	)
+	C31.place(x=4, y=48)
+
+class _C32:
+	if os.name == "nt":
+		def getWinDesktopPath():
+			key = winreg.OpenKey(
+				winreg.HKEY_CURRENT_USER,
+				r"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders",
+			)
+			path, _ = winreg.QueryValueEx(key, "Desktop")
+			return os.path.expandvars(path)
+		path = getWinDesktopPath()
+	else:
+		path = os.getcwd()
+
+	os.chdir(path)
+	curDir = Tk.StringVar(value=path)
+
+	global C32
+	C32 = Tk.Entry(
+		W0,
+		font=(FontType, 9),
+		fg=FontColor,
+		bg=BackColor,
+		readonlybackground=BackColor,
+		relief="flat",
+		highlightthickness=1,
+		highlightbackground="gray40",
+		highlightcolor="gray40",
+		textvariable=curDir,
+		state="readonly"
+	)
+	C32.place(x=25, y=48, height=20)
+
+class _C33:
+	def fileDialog():
+		path = Tk_Fd.askdirectory(initialdir=C32.get())
+		if path:
+			C32.config(state="normal")
+			C32.delete(0, Tk.END)
+			C32.insert(0, path)
+			C32.config(state="readonly")
+			os.chdir(path)
+
+	global C33
+	C33 = Tk.Button(
+		W0,
+		text="選択",
+		font=(FontType, 9),
+		fg=FontColor,
+		bg="gray40",
+		highlightthickness=0,
+		relief="flat",
+		cursor="hand2",
+		activebackground="orange",
+		activeforeground="black",
+		command=fileDialog
+	)
+	C33.place(y=48, width=60, height=20)
+
+# C51 < C47, C48, C49
+class _C51:
 	def FileRead(obj = None, e = None):
 		if obj == None:
 			return
@@ -465,36 +543,36 @@ class _C41:
 
 	def Button_1(e):
 		try:
-			global C41_ContextMenu
-			C41_ContextMenu.destroy()
+			global C51_ContextMenu
+			C51_ContextMenu.destroy()
 		except:
 			pass
 
 	def ButtonRelease_1(e):
 		obj1 = Tk.Menu(W0, font=(FontType, 10), tearoff=0)
-		if C41.tag_ranges("sel"):
-			obj1.add_command(label="クリア", command=_C41.Clear(obj=C41, select_all=False))
+		if C51.tag_ranges("sel"):
+			obj1.add_command(label="クリア", command=_C51.Clear(obj=C51, select_all=False))
 			obj1.add_separator()
-			obj1.add_command(label="コピー", command=_C41.Copy(obj=C41, select_all=False))
-			obj1.add_command(label="カット", command=_C41.Cut(obj=C41, select_all=False))
-			obj1.add_command(label="ペースト", command=_C41.Paste(obj=C41, select_all=False))
+			obj1.add_command(label="コピー", command=_C51.Copy(obj=C51, select_all=False))
+			obj1.add_command(label="カット", command=_C51.Cut(obj=C51, select_all=False))
+			obj1.add_command(label="ペースト", command=_C51.Paste(obj=C51, select_all=False))
 		obj1.post(e.x_root, e.y_root)
-		global C41_ContextMenu
-		C41_ContextMenu = obj1
+		global C51_ContextMenu
+		C51_ContextMenu = obj1
 
 	def Button_3(e):
 		obj1 = Tk.Menu(W0, font=(FontType, 10), tearoff=0)
-		obj1.add_command(label="全クリア", command=_C41.Clear(obj=C41, select_all=True))
+		obj1.add_command(label="全クリア", command=_C51.Clear(obj=C51, select_all=True))
 		obj1.add_separator()
-		obj1.add_command(label="全コピー", command=_C41.Copy(obj=C41, select_all=True))
-		obj1.add_command(label="全カット", command=_C41.Cut(obj=C41, select_all=True))
-		obj1.add_command(label="ペースト", command=_C41.Paste(obj=C41, select_all=True))
+		obj1.add_command(label="全コピー", command=_C51.Copy(obj=C51, select_all=True))
+		obj1.add_command(label="全カット", command=_C51.Cut(obj=C51, select_all=True))
+		obj1.add_command(label="ペースト", command=_C51.Paste(obj=C51, select_all=True))
 		obj1.post(e.x_root, e.y_root)
-		global C41_ContextMenu
-		C41_ContextMenu = obj1
+		global C51_ContextMenu
+		C51_ContextMenu = obj1
 
-	global C41
-	C41 = Tk_St.ScrolledText(
+	global C51
+	C51 = Tk_St.ScrolledText(
 		W0,
 		font=(FontType, 11),
 		relief="flat",
@@ -502,25 +580,25 @@ class _C41:
 		undo="true",
 		insertofftime=0
 	)
-	C41.place(x=5, y=73)
-	C41.bind("<Button-1>", Button_1)
-	C41.bind("<ButtonRelease-1>", ButtonRelease_1)
-	C41.bind("<Button-3>", Button_3)
-	C41.configure(state="normal")
+	C51.place(x=4, y=95)
+	C51.bind("<Button-1>", Button_1)
+	C51.bind("<ButtonRelease-1>", ButtonRelease_1)
+	C51.bind("<Button-3>", Button_3)
+	C51.configure(state="normal")
 
-class _C31:
-	global C31
-	C31 = Tk.Label(
+class _C41:
+	global C41
+	C41 = Tk.Label(
 		text="YouTube URL（改行区切り）",
 		font=(FontType, 9, "bold"),
 		fg=FontColor,
 		bg=BackColor
 	)
-	C31.place(x=5, y=52)
+	C41.place(x=4, y=73)
 
-class _C37:
-	global C37
-	C37 = Tk.Button(
+class _C47:
+	global C47
+	C47 = Tk.Button(
 		W0,
 		text="ファイル",
 		font=(FontType, 9),
@@ -529,13 +607,15 @@ class _C37:
 		highlightthickness=0,
 		relief="flat",
 		cursor="hand2",
-		command=_C41.FileRead(obj=C41)
+		activebackground="orange",
+		activeforeground="black",
+		command=_C51.FileRead(obj=C51)
 	)
-	C37.place(y=53, width=70, height=20)
+	C47.place(y=76, width=70, height=18)
 
-class _C38:
-	global C38
-	C38 = Tk.Button(
+class _C48:
+	global C48
+	C48 = Tk.Button(
 		W0,
 		text="クリア",
 		font=(FontType, 9),
@@ -544,13 +624,15 @@ class _C38:
 		highlightthickness=0,
 		relief="flat",
 		cursor="hand2",
-		command=_C41.Clear(obj=C41, select_all=True)
+		activebackground="orange",
+		activeforeground="black",
+		command=_C51.Clear(obj=C51, select_all=True)
 	)
-	C38.place(y=53, width=70, height=20)
+	C48.place(y=76, width=70, height=18)
 
-class _C39:
-	global C39
-	C39 = Tk.Button(
+class _C49:
+	global C49
+	C49 = Tk.Button(
 		W0,
 		text="ペースト",
 		font=(FontType, 9),
@@ -559,9 +641,11 @@ class _C39:
 		highlightthickness=0,
 		relief="flat",
 		cursor="hand2",
-		command=_C41.Add(obj=C41)
+		activebackground="orange",
+		activeforeground="black",
+		command=_C51.Add(obj=C51)
 	)
-	C39.place(y=53, width=70, height=20)
+	C49.place(y=76, width=70, height=18)
 
 class _W0_Main:
 	def Resize(e):
@@ -569,10 +653,12 @@ class _W0_Main:
 			C21.place(width=e.width-155)
 			C22.place(x=e.width-150)
 			C23.place(x=e.width-90)
-			C37.place(x=e.width-215)
-			C38.place(x=e.width-145)
-			C39.place(x=e.width-75)
-			C41.place(width=e.width-10, height=e.height-79)
+			C32.place(width=e.width-176)
+			C33.place(x=e.width-150)
+			C47.place(x=e.width-214)
+			C48.place(x=e.width-144)
+			C49.place(x=e.width-74)
+			C51.place(width=e.width-8, height=e.height-100)
 
 	# Window 初期サイズ
 	min = {
@@ -612,17 +698,17 @@ class _W0_Main:
 	#---------------------------------
 	# 引数のファイル名からリスト読込
 	#---------------------------------
-	AryC41 = []
+	AryC51 = []
 	for _s1 in sys.argv:
-		AryC41.append(_s1.strip())
-	del AryC41[0]
-	for _s1 in AryC41:
+		AryC51.append(_s1.strip())
+	del AryC51[0]
+	for _s1 in AryC51:
 		try:
 			with open(_s1) as iFp:
-				C41.insert("insert", iFp.read().rstrip() + "\n")
+				C51.insert("insert", iFp.read().rstrip() + "\n")
 		except:
 			pass
-	C41.see("insert")
+	C51.see("insert")
 
 	#-------------
 	# フォーカス
@@ -634,4 +720,3 @@ class _W0_Main:
 	#-------
 	W0.mainloop()
 	W0.quit()
-
