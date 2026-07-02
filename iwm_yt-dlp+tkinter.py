@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20260517"
+VERSION = "Ver.iwm20260702"
 
 import os
 import shutil
@@ -18,7 +18,6 @@ from ctypes import *
 from ctypes.wintypes import *
 from tkinter import messagebox
 
-# Windows用
 try:
 	import winreg
 except Exception:
@@ -147,7 +146,6 @@ class _W0:
 	W0 = Tk.Tk()
 
 class _C11:
-	global C11
 	C11 = Tk.Label(
 		text="YT-DLP コマンド",
 		font=(FontType, 9, "bold"),
@@ -203,7 +201,6 @@ class _C21:
 
 	def Button_1(e):
 		try:
-			global C21_ContextMenu
 			C21_ContextMenu.destroy()
 		except:
 			pass
@@ -217,7 +214,6 @@ class _C21:
 			obj1.add_command(label="カット", command=_C21.Cut(obj=C21, select_all=False))
 			obj1.add_command(label="ペースト", command=_C21.Paste(obj=C21, select_all=False))
 		obj1.post(e.x_root, e.y_root)
-		global C21_ContextMenu
 		C21_ContextMenu = obj1
 
 	def Button_3(e):
@@ -228,7 +224,6 @@ class _C21:
 		obj1.add_command(label="全カット", command=_C21.Cut(obj=C21, select_all=True))
 		obj1.add_command(label="ペースト", command=_C21.Paste(obj=C21, select_all=True))
 		obj1.post(e.x_root, e.y_root)
-		global C21_ContextMenu
 		C21_ContextMenu = obj1
 
 	a1 = LIST_COMMAND.strip().split("\n")
@@ -302,7 +297,7 @@ class _C22:
 						else:
 							if GblPS > 2:
 								GblPS -= 1
-						print(f"\033[94m[Concurrent Processes = {GblPS}]\033[0m")
+						print(f"\033[95m[Concurrent Processes = {GblPS}]\033[0m")
 				# 単一処理のとき
 				else:
 					_ps.wait()
@@ -311,6 +306,9 @@ class _C22:
 					"\033[91m" +
 					"[Err] コマンドを間違っていませんか？"
 				)
+			# Debug
+			##	except Exception as e:
+			##	print(str(e))
 		for _ps in ListPS:
 			_ps.wait()
 		TmEnd = time.time()
@@ -370,7 +368,6 @@ class _C23:
 	C23.place(y=22, width=80, height=20)
 
 class _C31:
-	global C31
 	C31 = Tk.Label(
 		text="=>",
 		font=(FontType, 9, "bold"),
@@ -380,7 +377,9 @@ class _C31:
 	C31.place(x=4, y=48)
 
 class _C32:
-	if os.name == "nt":
+	if os.path.isdir("/usr/bin"):
+		path = os.getcwd()
+	else:
 		def getWinDesktopPath():
 			key = winreg.OpenKey(
 				winreg.HKEY_CURRENT_USER,
@@ -389,8 +388,6 @@ class _C32:
 			path, _ = winreg.QueryValueEx(key, "Desktop")
 			return os.path.expandvars(path)
 		path = getWinDesktopPath()
-	else:
-		path = os.getcwd()
 
 	os.chdir(path)
 	curDir = Tk.StringVar(value=path)
@@ -543,7 +540,6 @@ class _C51:
 
 	def Button_1(e):
 		try:
-			global C51_ContextMenu
 			C51_ContextMenu.destroy()
 		except:
 			pass
@@ -557,7 +553,6 @@ class _C51:
 			obj1.add_command(label="カット", command=_C51.Cut(obj=C51, select_all=False))
 			obj1.add_command(label="ペースト", command=_C51.Paste(obj=C51, select_all=False))
 		obj1.post(e.x_root, e.y_root)
-		global C51_ContextMenu
 		C51_ContextMenu = obj1
 
 	def Button_3(e):
@@ -568,7 +563,6 @@ class _C51:
 		obj1.add_command(label="全カット", command=_C51.Cut(obj=C51, select_all=True))
 		obj1.add_command(label="ペースト", command=_C51.Paste(obj=C51, select_all=True))
 		obj1.post(e.x_root, e.y_root)
-		global C51_ContextMenu
 		C51_ContextMenu = obj1
 
 	global C51
@@ -587,7 +581,6 @@ class _C51:
 	C51.configure(state="normal")
 
 class _C41:
-	global C41
 	C41 = Tk.Label(
 		text="YouTube URL（改行区切り）",
 		font=(FontType, 9, "bold"),
@@ -655,9 +648,9 @@ class _W0_Main:
 			C23.place(x=e.width-90)
 			C32.place(width=e.width-176)
 			C33.place(x=e.width-150)
-			C47.place(x=e.width-214)
-			C48.place(x=e.width-144)
-			C49.place(x=e.width-74)
+			C47.place(x=e.width-213)
+			C48.place(x=e.width-143)
+			C49.place(x=e.width-73)
 			C51.place(width=e.width-8, height=e.height-100)
 
 	# Window 初期サイズ
