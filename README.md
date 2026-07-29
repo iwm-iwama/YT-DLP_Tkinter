@@ -1,25 +1,17 @@
-【バグ情報】
+### 実行に必要なライブラリ
+- Tkinter
 
-	Ver.iwm20250414
-	Ver.iwm20250418
-		一部の操作時に期待しない処理をする。
+### 動作確認済
+- Windows: MSYS2/MinGW-w64
+- Linux
 
-【実行に必要なライブラリ】
+### このスクリプトについて
+- YT-DLP（YouTube Downloader）の操作を補助するGUIプログラムです。
+  - YT-DLP は本家HPから入手してください。
+    - https://github.com/yt-dlp/yt-dlp#release-files
+- 端末から起動しますが、基本操作はマウスで行います。
 
-	Tkinter
-
-【動作確認済】
-
-	Windows10: MSYS2/MinGW-w64
-	Linux
-
-【このスクリプトについて】
-
-	YT-DLP(YouTube Downloader)の操作を補助するGUIプログラムです。
-	(YT-DLP は本家HPから入手してください。https://github.com/yt-dlp/yt-dlp#release-files)
-
-	端末（DOSプロンプト／Terminal）から起動しますが、基本操作はマウスで行います。
-	実行オプションについては、目的に応じてスクリプト内の変数「List_Cmd =」を変更してください。
-
- 	Ver.20240513では、並列処理が実装されました。
- 	Ver.20240606では、並列処理（非同期処理）と同期処理を選択できるようになりました。
+### 履歴
+- Ver.20240513：非同期処理を実装
+- Ver.20240606：非同期処理と同期処理を選択可能
+- Ver.20260729：非同期処理を高速化
