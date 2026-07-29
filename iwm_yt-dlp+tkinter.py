@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20260702"
+VERSION = "Ver.iwm20260729"
 
 import os
 import shutil
@@ -38,7 +38,7 @@ wget -rN
 # Base
 FontType  = "TkFixedFont"
 FontColor = "#fff"
-BackColor = "#383838"
+BackColor = "#363636"
 
 #-------------------------------------------------------------------------------
 # W0 = Window[0]
@@ -266,16 +266,23 @@ class _C22:
 					aCmd += [(_sCmd.replace("&", "%26"))]
 		else:
 			aCmd += [sCmd]
-		ListPS = []
 		# 並列処理数(Min=2)は動的に変更
 		GblPS = 2
+		ListPS = []
 		CntParallel = 0
 		Cnt = 0
 		for _s1 in aCmd:
 			Cnt += 1
 			print(f"\033[97;44m({Cnt}) {_s1}\033[0m")
 			try:
+				# 計測開始
+				SwBgn = time.perf_counter()
+
 				_ps = subprocess.Popen(_s1.split(), shell=False)
+
+				# 計測終了
+				SwEnd = time.perf_counter()
+
 				# 並列処理のとき
 				if C23_Var.get():
 					# PSリスト作成
@@ -283,13 +290,6 @@ class _C22:
 					CntParallel += 1
 					if CntParallel >= GblPS:
 						CntParallel = 0
-						# 計測開始
-						SwBgn = time.perf_counter()
-						for _ps in ListPS:
-							_ps.wait()
-						ListPS = []
-						# 計測終了
-						SwEnd = time.perf_counter()
 						# 計測時間が 1秒未満 なら並列処理数 +2
 						if (SwEnd - SwBgn) < 1.0:
 							GblPS += 2
@@ -307,8 +307,9 @@ class _C22:
 					"[Err] コマンドを間違っていませんか？"
 				)
 			# Debug
-			##	except Exception as e:
-			##	print(str(e))
+			##except Exception as e:
+			##print(str(e))
+		# 処理待ち
 		for _ps in ListPS:
 			_ps.wait()
 		TmEnd = time.time()
