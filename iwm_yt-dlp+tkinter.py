@@ -155,6 +155,11 @@ class _C11:
 	)
 	C11.place(x=4, y=2)
 
+#------------------
+# C21_ContextMenu
+#------------------
+C21_ctx_menu = None
+
 class _C21:
 	def Clear(obj = None, select_all = False, e = None):
 		if obj == None:
@@ -201,12 +206,14 @@ class _C21:
 		return inner
 
 	def Button_1(e):
-		try:
-			C21_ContextMenu.destroy()
-		except:
-			pass
+		global C21_ctx_menu
+		if C21_ctx_menu is not None:
+			try: C21_ctx_menu.unpost(); C21_ctx_menu.desatroy()
+			except: pass
+			C21_ctx_menu = None
 
 	def ButtonRelease_1(e):
+		global C21_ctx_menu
 		obj1 = Tk.Menu(W0, tearoff=0, font=(FontType, 10))
 		if C21.selection_present():
 			obj1.add_command(label="クリア", command=_C21.Clear(obj=C21, select_all=False))
@@ -215,9 +222,13 @@ class _C21:
 			obj1.add_command(label="カット", command=_C21.Cut(obj=C21, select_all=False))
 			obj1.add_command(label="ペースト", command=_C21.Paste(obj=C21, select_all=False))
 		obj1.post(e.x_root, e.y_root)
-		C21_ContextMenu = obj1
+		C21_ctx_menu = obj1
 
 	def Button_3(e):
+		global C21_ctx_menu
+		if C21_ctx_menu is not None:
+			try: C21_ctx_menu.unpost(); C21_ctx_menu.destroy()
+			except: pass
 		obj1 = Tk.Menu(W0, tearoff=0, font=(FontType, 10))
 		obj1.add_command(label="全クリア", command=_C21.Clear(obj=C21, select_all=True))
 		obj1.add_separator()
@@ -225,7 +236,7 @@ class _C21:
 		obj1.add_command(label="全カット", command=_C21.Cut(obj=C21, select_all=True))
 		obj1.add_command(label="ペースト", command=_C21.Paste(obj=C21, select_all=True))
 		obj1.post(e.x_root, e.y_root)
-		C21_ContextMenu = obj1
+		C21_ctx_menu = obj1
 
 	a1 = LIST_COMMAND.strip().split("\n")
 
@@ -412,6 +423,11 @@ class _C33:
 	)
 	C33.place(y=48, width=60, height=20)
 
+#------------------
+# C51_ContextMenu
+#------------------
+C51_ctx_menu = None
+
 # C51 < C47, C48, C49
 class _C51:
 	def FileRead(obj = None, e = None):
@@ -517,12 +533,14 @@ class _C51:
 		return inner
 
 	def Button_1(e):
-		try:
-			C51_ContextMenu.destroy()
-		except:
-			pass
+		global C51_ctx_menu
+		if C51_ctx_menu is not None:
+			try: C51_ctx_menu.unpost(); C51_ctx_menu.desatroy()
+			except: pass
+			C51_ctx_menu = None
 
 	def ButtonRelease_1(e):
+		global C51_ctx_menu
 		obj1 = Tk.Menu(W0, font=(FontType, 10), tearoff=0)
 		if C51.tag_ranges("sel"):
 			obj1.add_command(label="クリア", command=_C51.Clear(obj=C51, select_all=False))
@@ -531,9 +549,13 @@ class _C51:
 			obj1.add_command(label="カット", command=_C51.Cut(obj=C51, select_all=False))
 			obj1.add_command(label="ペースト", command=_C51.Paste(obj=C51, select_all=False))
 		obj1.post(e.x_root, e.y_root)
-		C51_ContextMenu = obj1
+		C51_ctx_menu = obj1
 
 	def Button_3(e):
+		global C51_ctx_menu
+		if C51_ctx_menu is not None:
+			try: C51_ctx_menu.unpost(); C51_ctx_menu.destroy()
+			except: pass
 		obj1 = Tk.Menu(W0, font=(FontType, 10), tearoff=0)
 		obj1.add_command(label="全クリア", command=_C51.Clear(obj=C51, select_all=True))
 		obj1.add_separator()
@@ -541,7 +563,7 @@ class _C51:
 		obj1.add_command(label="全カット", command=_C51.Cut(obj=C51, select_all=True))
 		obj1.add_command(label="ペースト", command=_C51.Paste(obj=C51, select_all=True))
 		obj1.post(e.x_root, e.y_root)
-		C51_ContextMenu = obj1
+		C51_ctx_menu = obj1
 
 	global C51
 	C51 = Tk_St.ScrolledText(
