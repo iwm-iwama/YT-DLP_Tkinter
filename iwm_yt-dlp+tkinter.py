@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20260729"
+VERSION = "Ver.iwm20260730"
 
 import os
 import shutil
@@ -14,6 +14,7 @@ import tkinter.filedialog as Tk_Fd
 import tkinter.scrolledtext as Tk_St
 import tkinter.ttk as Tk_Ttk
 
+from concurrent.futures import ThreadPoolExecutor
 from ctypes import *
 from ctypes.wintypes import *
 from tkinter import messagebox
@@ -32,13 +33,13 @@ yt-dlp -f bestvideo*+bestaudio/best
 yt-dlp -x --audio-format mp3
 yt-dlp --help
 echo
-wget -rN
+wget -r -nH -x
 """
 
 # Base
 FontType  = "TkFixedFont"
 FontColor = "#fff"
-BackColor = "#363636"
+BackColor = "#383838"
 
 #-------------------------------------------------------------------------------
 # W0 = Window[0]
@@ -266,52 +267,28 @@ class _C22:
 					aCmd += [(_sCmd.replace("&", "%26"))]
 		else:
 			aCmd += [sCmd]
-		# 並列処理数(Min=2)は動的に変更
-		GblPS = 2
-		ListPS = []
-		CntParallel = 0
+
+		# CPUコア数に合わせる
+		GblPS = os.cpu_count() or 4 
 		Cnt = 0
-		for _s1 in aCmd:
-			Cnt += 1
-			print(f"\033[97;44m({Cnt}) {_s1}\033[0m")
+
+		# 単一処理か並列処理かで同時に動かす数を決める
+		max_workers = GblPS if C23_Var.get() else 1
+
+		def runCommand(cmd):
 			try:
-				# 計測開始
-				SwBgn = time.perf_counter()
+				# shell=False なので split() が必要
+				subprocess.run(cmd.split(), shell=False, check=True)
+			except Exception:
+				print("\033[91m[Err] コマンドを間違っていませんか？\033[0m")
 
-				_ps = subprocess.Popen(_s1.split(), shell=False)
+		# ThreadPoolExecutor が自動的に効率よくプロセスを並列管理してくれる
+		with ThreadPoolExecutor(max_workers=max_workers) as executor:
+			for _s1 in aCmd:
+				Cnt += 1
+				print(f"\033[97;44m( {Cnt} ) {_s1}\033[0m")
+				executor.submit(runCommand, _s1)
 
-				# 計測終了
-				SwEnd = time.perf_counter()
-
-				# 並列処理のとき
-				if C23_Var.get():
-					# PSリスト作成
-					ListPS.append(_ps)
-					CntParallel += 1
-					if CntParallel >= GblPS:
-						CntParallel = 0
-						# 計測時間が 1秒未満 なら並列処理数 +2
-						if (SwEnd - SwBgn) < 1.0:
-							GblPS += 2
-						# 計測時間が 1秒以上 なら並列処理数 -1 ただし 最低値は 2
-						else:
-							if GblPS > 2:
-								GblPS -= 1
-						print(f"\033[95m[Concurrent Processes = {GblPS}]\033[0m")
-				# 単一処理のとき
-				else:
-					_ps.wait()
-			except:
-				print(
-					"\033[91m" +
-					"[Err] コマンドを間違っていませんか？"
-				)
-			# Debug
-			##except Exception as e:
-			##print(str(e))
-		# 処理待ち
-		for _ps in ListPS:
-			_ps.wait()
 		TmEnd = time.time()
 		s1 = "counts" if Cnt > 1 else "count"
 		s2 = ""
