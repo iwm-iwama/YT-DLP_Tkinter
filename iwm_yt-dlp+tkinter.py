@@ -2,7 +2,7 @@
 #coding:utf-8
 
 PROGRAM = "YT-DLP+Tkinter"
-VERSION = "Ver.iwm20260730"
+VERSION = "Ver.iwm20260731"
 
 import os
 import shutil
@@ -15,14 +15,11 @@ import tkinter.scrolledtext as Tk_St
 import tkinter.ttk as Tk_Ttk
 
 from concurrent.futures import ThreadPoolExecutor
-from ctypes import *
-from ctypes.wintypes import *
 from tkinter import messagebox
 
-try:
-	import winreg
-except Exception:
-	pass
+if sys.platform == "win32":
+    import winreg
+    from ctypes import windll
 
 #-------------------------------------------------------------------------------
 # My Config
@@ -48,6 +45,10 @@ class _Terminal:
 	def Help():
 		BG = " " * 60
 		print(
+			"\033[37m" +
+			VERSION +
+			"\n" +
+			"\n" +
 			"\033[97;44m" +
 			BG +
 			"\033[2G" +
@@ -113,9 +114,9 @@ class _Terminal:
 						capture_output=True,
 						text=True
 					).stdout.strip() +
-					"\033[0m"
+					"\033[0m" +
+					"\n"
 				)
-			print()
 			_Terminal.Help()
 		else:
 			print(
@@ -164,7 +165,7 @@ class _C21:
 	def Clear(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			if select_all:
 				obj.delete("0", "end")
 			else:
@@ -174,7 +175,7 @@ class _C21:
 	def Copy(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			obj.clipboard_clear()
 			if select_all:
 				obj.clipboard_append(obj.get())
@@ -185,7 +186,7 @@ class _C21:
 	def Cut(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			obj.clipboard_clear()
 			if select_all:
 				obj.clipboard_append(obj.get())
@@ -198,7 +199,7 @@ class _C21:
 	def Paste(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			text = obj.selection_get(selection="CLIPBOARD").rstrip()
 			if select_all == False:
 				obj.delete("sel.first", "sel.last")
@@ -208,7 +209,7 @@ class _C21:
 	def Button_1(e):
 		global C21_ctx_menu
 		if C21_ctx_menu is not None:
-			try: C21_ctx_menu.unpost(); C21_ctx_menu.desatroy()
+			try: C21_ctx_menu.unpost(); C21_ctx_menu.destroy()
 			except: pass
 			C21_ctx_menu = None
 
@@ -279,12 +280,10 @@ class _C22:
 		else:
 			aCmd += [sCmd]
 
-		# CPUコア数に合わせる
-		GblPS = os.cpu_count() or 4 
 		Cnt = 0
 
 		# 単一処理か並列処理かで同時に動かす数を決める
-		max_workers = GblPS if C23_Var.get() else 1
+		max_workers = (os.cpu_count() or 4) if C23_Var.get() else 1
 
 		def runCommand(cmd):
 			try:
@@ -366,17 +365,17 @@ class _C31:
 	C31.place(x=4, y=48)
 
 class _C32:
-	if os.path.isdir("/usr/bin"):
+	if os.path.isdir("/usr"):
 		path = os.getcwd()
 	else:
-		def getWinDesktopPath():
+		def getWinDesktopPath() -> str:
 			key = winreg.OpenKey(
 				winreg.HKEY_CURRENT_USER,
 				r"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders",
 			)
 			path, _ = winreg.QueryValueEx(key, "Desktop")
 			return os.path.expandvars(path)
-		path = getWinDesktopPath()
+		path = getWinDesktopPath().replace("\\", "/")
 
 	os.chdir(path)
 	curDir = Tk.StringVar(value=path)
@@ -433,7 +432,7 @@ class _C51:
 	def FileRead(obj = None, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			filetype = [("All Files", "*")]
 			path = Tk_Fd.askopenfilename(initialdir=".", filetypes=filetype)
 			if len(path) == 0 or os.path.isfile(path) == False:
@@ -471,7 +470,7 @@ class _C51:
 	def Clear(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			if select_all:
 				obj.delete("1.0", "end")
 			else:
@@ -481,7 +480,7 @@ class _C51:
 	def Copy(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			obj.clipboard_clear()
 			if select_all:
 				obj.clipboard_append(obj.get("1.0", "end-1c"))
@@ -492,7 +491,7 @@ class _C51:
 	def Cut(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			obj.clipboard_clear()
 			if select_all:
 				obj.clipboard_append(obj.get("1.0", "end-1c"))
@@ -505,7 +504,7 @@ class _C51:
 	def Paste(obj = None, select_all = False, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			text = obj.selection_get(selection="CLIPBOARD").rstrip()
 			if select_all == False:
 				obj.delete("sel.first", "sel.last")
@@ -516,7 +515,7 @@ class _C51:
 	def Add(obj = None, e = None):
 		if obj == None:
 			return
-		def inner():
+		def inner() -> None:
 			s1 = obj.get("1.0", "end").strip()
 			if s1:
 				s1 += "\n"
